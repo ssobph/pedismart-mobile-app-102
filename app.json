@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "EcoRide",
+    "name": "PediSmart",
     "slug": "rideapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/ecoride_logo1.png",
+    "icon": "./src/assets/images/pedismart_icon.png",
     "scheme": "myapp",
     "newArchEnabled": true,
     "userInterfaceStyle": "automatic",

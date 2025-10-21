@@ -82,7 +82,7 @@ export default function Main() {
   return (
     <View style={commonStyles.container}>
       <Image
-        source={require("@/assets/images/ecoride_logo1.png")}
+        source={require("@/assets/images/pedismart_logo.png")}
         style={splashStyles.img}
       />
       <CustomText variant="h5" fontFamily="Medium" style={splashStyles.text}>

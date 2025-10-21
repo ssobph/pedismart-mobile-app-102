@@ -5,8 +5,8 @@ import { Platform } from "react-native";
 // export const SOCKET_URL = 'http://localhost:3000';
 
 // Production deployment - Render.com (commented out for local development)
- export const BASE_URL = 'https://ecoride-server-deploy104.onrender.com';
- export const SOCKET_URL = 'wss://ecoride-server-deploy104.onrender.com';
+ export const BASE_URL = 'https://pedismart-server-deploy102.onrender.com';
+ export const SOCKET_URL = 'wss://pedismart-server-deploy102.onrender.com';
 
 // Alternative configurations (uncomment as needed)
 // For local testing STEPHEN PISO WIFI

@@ -1,4 +1,4 @@
-# EcoRide Production APK Build Guide
+# PediSmart Production APK Build Guide
 
 ## Prerequisites ✅
 - EAS CLI installed: `npm install -g eas-cli`
@@ -31,7 +31,7 @@
 
 ### Step 1: Clean Build
 ```bash
-cd /Users/fankarwanta/Desktop/ecoride_folder_3/client
+
 npx eas build --platform android --profile production --clear-cache
 ```
 

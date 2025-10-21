@@ -1,14 +1,14 @@
 // API configuration - Production (Render.com)
-export const API_URL = 'https://ecoride-server-deploy104.onrender.com';
+export const API_URL = 'https://pedismart-server-deploy102.onrender.com';
 export const API_AUTH_URL = `${API_URL}/api/auth`;
 export const API_RIDE_URL = `${API_URL}/ride`;
 
 // Socket configuration - Production (Render.com)
-export const SOCKET_URL = 'wss://ecoride-server-deploy104.onrender.com';
+export const SOCKET_URL = 'wss://pedismart-server-deploy102.onrender.com';
 
 // For local development, uncomment these lines:
-// export const API_URL = 'http://localhost:3000';
-// export const SOCKET_URL = 'http://localhost:3000';
+//export const API_URL = 'http://localhost:3000';
+//export const SOCKET_URL = 'http://localhost:3000';
 
 // Ride status constants
 export const RIDE_STATUS = {
