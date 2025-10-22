@@ -9,6 +9,7 @@ import CustomText from "../shared/CustomText";
 import { calculateDistance, vehicleIcons } from "@/utils/mapUtils";
 import { Ionicons } from "@expo/vector-icons";
 import CounterButton from "./CounterButton";
+import { MAX_DISTANCE_KM } from "@/service/config";
 
 type VehicleType = "Tricycle"; // Commented out: "Single Motorcycle" | "Cab"
 
@@ -31,6 +32,21 @@ const RiderRidesItem: FC<{ item: RideItem; removeIt: () => void }> = ({
   const riderVehicleType = user?.vehicleType;
   const isVehicleMatch = !riderVehicleType || item.vehicle === riderVehicleType;
   
+  // ============================================
+  // Check distance from rider to pickup location
+  // ============================================
+  const distanceToPickup = location && item.pickup
+    ? calculateDistance(
+        location.latitude,
+        location.longitude,
+        item.pickup.latitude,
+        item.pickup.longitude
+      )
+    : null;
+  
+  const isTooFar = MAX_DISTANCE_KM && distanceToPickup && distanceToPickup > MAX_DISTANCE_KM;
+  // ============================================
+  
   const acceptRide = async () => {
     // Prevent accepting if vehicle type doesn't match
     if (!isVehicleMatch) {
@@ -41,6 +57,19 @@ const RiderRidesItem: FC<{ item: RideItem; removeIt: () => void }> = ({
       );
       return;
     }
+    
+    // ============================================
+    // Prevent accepting if ride is too far (when MAX_DISTANCE is enabled)
+    // ============================================
+    if (isTooFar) {
+      Alert.alert(
+        "Ride Too Far",
+        `This ride is ${distanceToPickup?.toFixed(1)}km away. Maximum distance is ${MAX_DISTANCE_KM}km. Please choose a closer ride.`,
+        [{ text: "OK" }]
+      );
+      return;
+    }
+    // ============================================
     
     acceptRideOffer(item?._id);
   };
@@ -64,6 +93,13 @@ const RiderRidesItem: FC<{ item: RideItem; removeIt: () => void }> = ({
           backgroundColor: '#f5f5f5',
           borderColor: '#ff6b6b',
           borderWidth: 2,
+        },
+        // Add visual styling for rides that are too far
+        !!isTooFar && {
+          opacity: 0.6,
+          backgroundColor: '#fff8e1',
+          borderColor: '#ff9800',
+          borderWidth: 2,
         }
       ]}
     >
@@ -81,6 +117,24 @@ const RiderRidesItem: FC<{ item: RideItem; removeIt: () => void }> = ({
           <Ionicons name="warning" size={20} color="white" />
           <CustomText fontSize={10} style={{ color: 'white', flex: 1 }}>
             ⚠️ Vehicle Mismatch: Requires {item.vehicle}, you have {riderVehicleType}
+          </CustomText>
+        </View>
+      )}
+      
+      {/* Distance Warning Banner (when MAX_DISTANCE is enabled) */}
+      {isTooFar && (
+        <View style={{
+          backgroundColor: '#ff9800',
+          padding: 8,
+          marginBottom: 10,
+          borderRadius: 5,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+        }}>
+          <Ionicons name="location" size={20} color="white" />
+          <CustomText fontSize={10} style={{ color: 'white', flex: 1 }}>
+            📏 Too Far: {distanceToPickup?.toFixed(1)}km away (max: {MAX_DISTANCE_KM}km)
           </CustomText>
         </View>
       )}
@@ -187,8 +241,8 @@ const RiderRidesItem: FC<{ item: RideItem; removeIt: () => void }> = ({
           onCountdownEnd={removeIt}
           initialCount={30}
           onPress={acceptRide}
-          title={isVehicleMatch ? "Accept" : "Locked"}
-          disabled={!isVehicleMatch}
+          title={!isVehicleMatch ? "Locked" : isTooFar ? "Too Far" : "Accept"}
+          disabled={!isVehicleMatch || !!isTooFar}
         />
       </View>
     </Animated.View>

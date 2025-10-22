@@ -41,3 +41,11 @@ export const SOCKET_URL = 'wss://pedismart-server-deploy102.onrender.com';
 //export const BASE_URL = 'http://192.168.137.90:3000';
 //export const SOCKET_URL = 'ws://192.168.137.90:3000';
 
+// ============================================
+// MAX DISTANCE FEATURE (Easy to enable/disable)
+// ============================================
+// Uncomment the line below to enable 30KM max distance filtering
+// Riders beyond 30KM from passenger pickup won't see the ride
+export const MAX_DISTANCE_KM = 30; // Set to null to disable: export const MAX_DISTANCE_KM = null;
+// ============================================
+
