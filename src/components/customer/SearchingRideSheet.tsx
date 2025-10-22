@@ -9,7 +9,7 @@ import { vehicleIcons } from "@/utils/mapUtils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-type VehicleType = "Single Motorcycle" | "Tricycle" | "Cab";
+type VehicleType = "Tricycle"; // Commented out: "Single Motorcycle" | "Cab"
 
 interface RideItem {
   vehicle?: VehicleType;
@@ -73,6 +73,7 @@ const SearchingRideSheet: FC<{ item: RideItem }> = ({ item }) => {
           </CustomText>
         </View>
 
+        {/* COMMENTED OUT: Payment/Fare - Driver handles pricing manually
         <View style={{ marginVertical: 20 }}>
           <View style={[commonStyles.flexRowBetween]}>
             <View style={[commonStyles.flexRow]}>
@@ -97,6 +98,7 @@ const SearchingRideSheet: FC<{ item: RideItem }> = ({ item }) => {
 
           <CustomText fontSize={10}>Payment via cash</CustomText>
         </View>
+        */}
       </View>
 
       <View style={rideStyles?.bottomButtonContainer}>

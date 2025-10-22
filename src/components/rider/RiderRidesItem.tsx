@@ -10,7 +10,7 @@ import { calculateDistance, vehicleIcons } from "@/utils/mapUtils";
 import { Ionicons } from "@expo/vector-icons";
 import CounterButton from "./CounterButton";
 
-type VehicleType = "Single Motorcycle" | "Tricycle" | "Cab";
+type VehicleType = "Tricycle"; // Commented out: "Single Motorcycle" | "Cab"
 
 interface RideItem {
   _id: string;

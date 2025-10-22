@@ -129,24 +129,25 @@ export const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2
     return R * c;
 };
 
-export const calculateFare = (distance: number) => {
-    const rateStructure = {
-        "Single Motorcycle": { minimumRate: 15, perKmRate: 2.5 },
-        "Tricycle": { minimumRate: 20, perKmRate: 2.8 },
-        "Cab": { minimumRate: 30, perKmRate: 3 },
-    };
-
-    const fareCalculation = (minimumRate: number, perKmRate: number) => {
-        const calculatedFare = distance * perKmRate;
-        return Math.max(calculatedFare, minimumRate);
-    };
-
-    return {
-        "Single Motorcycle": fareCalculation(rateStructure["Single Motorcycle"].minimumRate, rateStructure["Single Motorcycle"].perKmRate),
-        "Tricycle": fareCalculation(rateStructure["Tricycle"].minimumRate, rateStructure["Tricycle"].perKmRate),
-        "Cab": fareCalculation(rateStructure["Cab"].minimumRate, rateStructure["Cab"].perKmRate),
-    };
-}
+// COMMENTED OUT: Payment/Fare - Driver handles pricing manually
+// export const calculateFare = (distance: number) => {
+//     const rateStructure = {
+//         // "Single Motorcycle": { minimumRate: 15, perKmRate: 2.5 }, // Commented out: Only using Tricycle
+//         "Tricycle": { minimumRate: 20, perKmRate: 2.8 },
+//         // "Cab": { minimumRate: 30, perKmRate: 3 }, // Commented out: Only using Tricycle
+//     };
+//
+//     const fareCalculation = (minimumRate: number, perKmRate: number) => {
+//         const calculatedFare = distance * perKmRate;
+//         return Math.max(calculatedFare, minimumRate);
+//     };
+//
+//     return {
+//         // "Single Motorcycle": fareCalculation(rateStructure["Single Motorcycle"].minimumRate, rateStructure["Single Motorcycle"].perKmRate), // Commented out: Only using Tricycle
+//         "Tricycle": fareCalculation(rateStructure["Tricycle"].minimumRate, rateStructure["Tricycle"].perKmRate),
+//         // "Cab": fareCalculation(rateStructure["Cab"].minimumRate, rateStructure["Cab"].perKmRate), // Commented out: Only using Tricycle
+//     };
+// }
 
 function quadraticBezierCurve(p1: any, p2: any, controlPoint: any, numPoints: any) {
     const points = [];
@@ -199,10 +200,10 @@ export const getPoints = (places: any) => {
     return quadraticBezierCurve(p1, p2, controlPoint, 100);
 };
 
-export const vehicleIcons: Record<'Single Motorcycle' | 'Tricycle' | 'Cab', { icon: any }> = {
-    "Single Motorcycle": { icon: require('@/assets/icons/SingleMotorcycle-NoBG.png') },
+export const vehicleIcons: Record<'Tricycle', { icon: any }> = {
+    // "Single Motorcycle": { icon: require('@/assets/icons/SingleMotorcycle-NoBG.png') }, // Commented out: Only using Tricycle
     "Tricycle": { icon: require('@/assets/icons/Tricycle-NoBG.png') },
-    "Cab": { icon: require('@/assets/icons/Car-NoBG.png') },
+    // "Cab": { icon: require('@/assets/icons/Car-NoBG.png') }, // Commented out: Only using Tricycle
   };
 
 // Calculate estimated travel time using Google Maps Distance Matrix API
@@ -211,11 +212,11 @@ export const getEstimatedTravelTime = async (
     originLng: number,
     destLat: number,
     destLng: number,
-    vehicleType: 'Single Motorcycle' | 'Tricycle' | 'Cab' = 'Single Motorcycle'
+    vehicleType: 'Tricycle' = 'Tricycle' // Commented out: 'Single Motorcycle' | 'Cab'
 ) => {
     try {
-        // Use motorcycle mode for bikes, driving for others
-        const travelMode = vehicleType === 'Single Motorcycle' ? 'driving' : 'driving';
+        // Use driving mode for all vehicles (only Tricycle is active)
+        const travelMode = 'driving'; // vehicleType === 'Single Motorcycle' ? 'driving' : 'driving';
         
         const response = await axios.get(
             'https://maps.googleapis.com/maps/api/distancematrix/json',
@@ -235,11 +236,12 @@ export const getEstimatedTravelTime = async (
             const durationInSeconds = element.duration.value;
             const distanceInMeters = element.distance.value;
             
-            // Adjust duration based on vehicle type (motorcycles can be faster in traffic)
+            // Adjust duration based on vehicle type (only Tricycle is active)
             let adjustedDuration = durationInSeconds;
-            if (vehicleType === 'Single Motorcycle') {
-                adjustedDuration = Math.round(durationInSeconds * 0.85); // 15% faster
-            } else if (vehicleType === 'Tricycle') {
+            // if (vehicleType === 'Single Motorcycle') { // Commented out: Only using Tricycle
+            //     adjustedDuration = Math.round(durationInSeconds * 0.85); // 15% faster
+            // } else 
+            if (vehicleType === 'Tricycle') {
                 adjustedDuration = Math.round(durationInSeconds * 1.1); // 10% slower
             }
             
@@ -265,16 +267,16 @@ const calculateFallbackTravelTime = (
     originLng: number,
     destLat: number,
     destLng: number,
-    vehicleType: 'Single Motorcycle' | 'Tricycle' | 'Cab'
+    vehicleType: 'Tricycle' // Commented out: 'Single Motorcycle' | 'Cab'
 ) => {
     const distanceKm = calculateDistance(originLat, originLng, destLat, destLng);
     const distanceInMeters = distanceKm * 1000;
     
-    // Average speeds in km/h for different vehicle types in city traffic
+    // Average speeds in km/h for different vehicle types in city traffic (only Tricycle is active)
     const averageSpeeds = {
-        'Single Motorcycle': 30, // Faster due to maneuverability
+        // 'Single Motorcycle': 30, // Commented out: Only using Tricycle
         'Tricycle': 20,          // Slower, local roads
-        'Cab': 25,               // Moderate speed
+        // 'Cab': 25,               // Commented out: Only using Tricycle
     };
     
     const speed = averageSpeeds[vehicleType];

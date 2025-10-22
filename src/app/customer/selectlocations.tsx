@@ -223,7 +223,8 @@ export default function LocationSelection() {
               </CustomText>
             </TouchableOpacity>
             
-            {/* Most Picked Locations Section */}
+            {/* COMMENTED OUT: Most Picked Locations - Temporarily disabled
+            Most Picked Locations Section
             <View style={{ marginTop: 20, paddingHorizontal: 16 }}>
               <CustomText
                 fontFamily="Medium"
@@ -275,6 +276,7 @@ export default function LocationSelection() {
                 </TouchableOpacity>
               ))}
             </View>
+            */}
           </View>
         }
       />

@@ -648,13 +648,14 @@ export default function Auth() {
       <View style={styles.inputContainer}>
         <CustomText fontFamily="Medium">Vehicle Type</CustomText>
         <View style={styles.vehicleTypeContainer}>
-          <TouchableOpacity 
+          {/* Commented out: Only using Tricycle */}
+          {/* <TouchableOpacity 
             style={[styles.vehicleTypeButton, vehicleType === "Single Motorcycle" && styles.vehicleTypeButtonSelected]} 
             onPress={() => setVehicleType("Single Motorcycle")}
           >
             <MaterialCommunityIcons name="motorbike" size={24} color={vehicleType === "Single Motorcycle" ? "#4CAF50" : "#666"} />
             <CustomText fontFamily="Regular" style={styles.vehicleTypeText}>Single Motorcycle</CustomText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           
           <TouchableOpacity 
             style={[styles.vehicleTypeButton, vehicleType === "Tricycle" && styles.vehicleTypeButtonSelected]} 
@@ -664,13 +665,14 @@ export default function Auth() {
             <CustomText fontFamily="Regular" style={styles.vehicleTypeText}>Tricycle</CustomText>
           </TouchableOpacity>
           
-          <TouchableOpacity 
+          {/* Commented out: Only using Tricycle */}
+          {/* <TouchableOpacity 
             style={[styles.vehicleTypeButton, vehicleType === "Cab" && styles.vehicleTypeButtonSelected]} 
             onPress={() => setVehicleType("Cab")}
           >
             <MaterialCommunityIcons name="car" size={24} color={vehicleType === "Cab" ? "#4CAF50" : "#666"} />
             <CustomText fontFamily="Regular" style={styles.vehicleTypeText}>Cab</CustomText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
 

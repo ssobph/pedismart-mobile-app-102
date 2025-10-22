@@ -49,12 +49,12 @@ const RatingItem: React.FC<RatingItemProps> = ({ rating }) => {
 
   const getVehicleName = (vehicle: string) => {
     switch (vehicle) {
-      case 'Single Motorcycle':
-        return 'Single Motorcycle';
+      // case 'Single Motorcycle': // Commented out: Only using Tricycle
+      //   return 'Single Motorcycle';
       case 'Tricycle':
         return 'Tricycle';
-      case 'Cab':
-        return 'Four Wheel';
+      // case 'Cab': // Commented out: Only using Tricycle
+      //   return 'Four Wheel';
       default:
         return vehicle;
     }
@@ -67,7 +67,8 @@ const RatingItem: React.FC<RatingItemProps> = ({ rating }) => {
   // Add null checks for ride property and its nested properties
   const rideVehicle = rating.ride?.vehicle ? getVehicleName(rating.ride.vehicle) : 'Unknown';
   const rideDistance = rating.ride?.distance !== undefined && rating.ride.distance !== null ? rating.ride.distance : 0;
-  const rideFare = rating.ride?.fare !== undefined && rating.ride.fare !== null ? rating.ride.fare : 0;
+  // COMMENTED OUT: Payment/Fare - Driver handles pricing manually
+  // const rideFare = rating.ride?.fare !== undefined && rating.ride.fare !== null ? rating.ride.fare : 0;
 
   return (
     <View style={styles.ratingItem}>
@@ -101,10 +102,10 @@ const RatingItem: React.FC<RatingItemProps> = ({ rating }) => {
         </View>
       )}
 
-      {/* Ride details section temporarily commented out due to data inconsistency issues.
-         Will be implemented properly in the future.
-      */}
-      {/*
+      {/* COMMENTED OUT: Payment/Fare - Driver handles pricing manually
+      Ride details section temporarily commented out due to data inconsistency issues.
+      Will be implemented properly in the future.
+      
       {rating.ride && (
         <View style={styles.rideDetails}>
           <CustomText fontFamily="Regular" fontSize={12} style={styles.rideInfoText}>

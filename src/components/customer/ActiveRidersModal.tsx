@@ -141,31 +141,32 @@ const ActiveRidersModal: FC<ActiveRidersModalProps> = ({
 
   const getVehicleIcon = (vehicleType: string) => {
     switch (vehicleType) {
-      case 'Single Motorcycle':
-        return 'motorbike';
+      // case 'Single Motorcycle': // Commented out: Only using Tricycle
+      //   return 'motorbike';
       case 'Tricycle':
         return 'rickshaw';
-      case 'Cab':
-        return 'car';
+      // case 'Cab': // Commented out: Only using Tricycle
+      //   return 'car';
       default:
-        return 'motorbike';
+        return 'rickshaw'; // Default to Tricycle
     }
   };
   
   const getVehicleDisplayName = (vehicleType: string) => {
-    return vehicleType === 'Cab' ? 'Four Wheel' : vehicleType;
+    // return vehicleType === 'Cab' ? 'Four Wheel' : vehicleType; // Commented out: Only using Tricycle
+    return vehicleType; // Only Tricycle is active
   };
 
   const getVehicleColor = (vehicleType: string) => {
     switch (vehicleType) {
-      case 'Single Motorcycle':
-        return '#FF6B35';
+      // case 'Single Motorcycle': // Commented out: Only using Tricycle
+      //   return '#FF6B35';
       case 'Tricycle':
         return '#4CAF50';
-      case 'Cab':
-        return '#2196F3';
+      // case 'Cab': // Commented out: Only using Tricycle
+      //   return '#2196F3';
       default:
-        return '#FF6B35';
+        return '#4CAF50'; // Default to Tricycle
     }
   };
 

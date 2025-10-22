@@ -57,19 +57,20 @@ const DriverDetailsModal: FC<DriverDetailsModalProps> = ({
 
   const getVehicleImage = (type: string) => {
     switch (type) {
-      case 'Single Motorcycle':
-        return require('@/assets/images/bike_marker.png');
+      // case 'Single Motorcycle': // Commented out: Only using Tricycle
+      //   return require('@/assets/images/bike_marker.png');
       case 'Tricycle':
         return require('@/assets/images/auto_marker.png');
-      case 'Cab':
-        return require('@/assets/images/cab_marker.png');
+      // case 'Cab': // Commented out: Only using Tricycle
+      //   return require('@/assets/images/cab_marker.png');
       default:
-        return require('@/assets/images/bike_marker.png');
+        return require('@/assets/images/auto_marker.png'); // Default to Tricycle
     }
   };
   
   const getVehicleDisplayName = (type: string) => {
-    return type === 'Cab' ? 'Four Wheel' : type;
+    // return type === 'Cab' ? 'Four Wheel' : type; // Commented out: Only using Tricycle
+    return type; // Only Tricycle is active
   };
 
   const handleCallDriver = async () => {

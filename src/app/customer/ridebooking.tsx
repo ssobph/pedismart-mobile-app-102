@@ -4,7 +4,9 @@ import { useRoute } from "@react-navigation/native";
 import { useUserStore } from "@/store/userStore";
 import { rideStyles } from "@/styles/rideStyles";
 import { StatusBar } from "expo-status-bar";
-import { calculateFare, getEstimatedTravelTime, calculateArrivalTime } from "@/utils/mapUtils";
+// COMMENTED OUT: Payment/Fare - Driver handles pricing manually
+// import { calculateFare, getEstimatedTravelTime, calculateArrivalTime } from "@/utils/mapUtils";
+import { getEstimatedTravelTime, calculateArrivalTime } from "@/utils/mapUtils";
 import RoutesMap from "@/components/customer/RoutesMap";
 import CustomText from "@/components/shared/CustomText";
 import { router } from "expo-router";
@@ -24,15 +26,16 @@ const RideBooking = () => {
   const route = useRoute() as any;
   const item = route?.params as any;
   const { location } = useUserStore() as any;
-  const [selectedOption, setSelectedOption] = useState("Bike");
+  const [selectedOption, setSelectedOption] = useState("Tricycle"); // Changed from "Bike" to "Tricycle"
   const [loading, setLoading] = useState(false);
   const [travelTimes, setTravelTimes] = useState<Record<string, TravelTimeData>>({});
   const [loadingTravelTimes, setLoadingTravelTimes] = useState(true);
 
-  const farePrices = useMemo(
-    () => calculateFare(parseFloat(item?.distanceInKm)),
-    [item?.distanceInKm]
-  );
+  // COMMENTED OUT: Payment/Fare - Driver handles pricing manually
+  // const farePrices = useMemo(
+  //   () => calculateFare(parseFloat(item?.distanceInKm)),
+  //   [item?.distanceInKm]
+  // );
 
   // Fetch travel times for all vehicle types
   useEffect(() => {
@@ -43,7 +46,8 @@ const RideBooking = () => {
       }
 
       setLoadingTravelTimes(true);
-      const vehicleTypes: Array<'Single Motorcycle' | 'Tricycle' | 'Cab'> = ['Single Motorcycle', 'Tricycle', 'Cab'];
+      // const vehicleTypes: Array<'Single Motorcycle' | 'Tricycle' | 'Cab'> = ['Single Motorcycle', 'Tricycle', 'Cab']; // Commented out: Only using Tricycle
+      const vehicleTypes: Array<'Tricycle'> = ['Tricycle']; // Only Tricycle is active
       const times: Record<string, TravelTimeData> = {};
 
       try {
@@ -81,48 +85,50 @@ const RideBooking = () => {
   }, [item?.drop_latitude, item?.drop_longitude, location?.latitude, location?.longitude]);
 
   const rideOptions = useMemo(() => {
-    // Determine which vehicle is fastest
-    let fastestVehicle = 'Single Motorcycle';
-    let minDuration = travelTimes['Single Motorcycle']?.durationInSeconds || Infinity;
+    // Determine which vehicle is fastest (only Tricycle is active)
+    // let fastestVehicle = 'Single Motorcycle'; // Commented out: Only using Tricycle
+    // let minDuration = travelTimes['Single Motorcycle']?.durationInSeconds || Infinity;
     
-    if (travelTimes['Tricycle']?.durationInSeconds < minDuration) {
-      fastestVehicle = 'Tricycle';
-      minDuration = travelTimes['Tricycle'].durationInSeconds;
-    }
-    if (travelTimes['Cab']?.durationInSeconds < minDuration) {
-      fastestVehicle = 'Cab';
-    }
+    // if (travelTimes['Tricycle']?.durationInSeconds < minDuration) {
+    //   fastestVehicle = 'Tricycle';
+    //   minDuration = travelTimes['Tricycle'].durationInSeconds;
+    // }
+    // if (travelTimes['Cab']?.durationInSeconds < minDuration) {
+    //   fastestVehicle = 'Cab';
+    // }
+    let fastestVehicle = 'Tricycle'; // Only Tricycle is active
 
     return [
-      {
-        type: "Single Motorcycle",
-        seats: 1,
-        time: travelTimes['Single Motorcycle']?.durationText || 'Calculating...',
-        dropTime: travelTimes['Single Motorcycle']?.arrivalTime || '--',
-        price: farePrices?.["Single Motorcycle"],
-        isFastest: fastestVehicle === 'Single Motorcycle',
-        icon: require("@/assets/icons/SingleMotorcycle-NoBG.png"),
-      },
+      // { // Commented out: Only using Tricycle
+      //   type: "Single Motorcycle",
+      //   seats: 1,
+      //   time: travelTimes['Single Motorcycle']?.durationText || 'Calculating...',
+      //   dropTime: travelTimes['Single Motorcycle']?.arrivalTime || '--',
+      //   price: farePrices?.["Single Motorcycle"],
+      //   isFastest: fastestVehicle === 'Single Motorcycle',
+      //   icon: require("@/assets/icons/SingleMotorcycle-NoBG.png"),
+      // },
       {
         type: "Tricycle",
-        seats: 3,
+        seats: 6,
         time: travelTimes['Tricycle']?.durationText || 'Calculating...',
         dropTime: travelTimes['Tricycle']?.arrivalTime || '--',
-        price: farePrices["Tricycle"],
+        // COMMENTED OUT: Payment/Fare - Driver handles pricing manually
+        // price: farePrices["Tricycle"],
         isFastest: fastestVehicle === 'Tricycle',
         icon: require("@/assets/icons/Tricycle-NoBG.png"),
       },
-      {
-        type: "Cab",
-        seats: 4,
-        time: travelTimes['Cab']?.durationText || 'Calculating...',
-        dropTime: travelTimes['Cab']?.arrivalTime || '--',
-        price: farePrices["Cab"],
-        isFastest: fastestVehicle === 'Cab',
-        icon: require("@/assets/icons/Car-NoBG.png"),
-      },
+      // { // Commented out: Only using Tricycle
+      //   type: "Cab",
+      //   seats: 4,
+      //   time: travelTimes['Cab']?.durationText || 'Calculating...',
+      //   dropTime: travelTimes['Cab']?.arrivalTime || '--',
+      //   price: farePrices["Cab"],
+      //   isFastest: fastestVehicle === 'Cab',
+      //   icon: require("@/assets/icons/Car-NoBG.png"),
+      // },
     ];
-  }, [farePrices, travelTimes]);
+  }, [travelTimes]); // COMMENTED OUT: farePrices - Driver handles pricing manually
 
   const handleOptionSelect = useCallback((type: string) => {
     setSelectedOption(type);
@@ -145,12 +151,13 @@ const RideBooking = () => {
         return;
       }
 
-      // Convert vehicle type
-      const vehicleType = selectedOption === "Single Motorcycle"
-        ? "Single Motorcycle"
-        : selectedOption === "Tricycle"
-        ? "Tricycle"
-        : "Cab";
+      // Convert vehicle type (only Tricycle is active)
+      // const vehicleType = selectedOption === "Single Motorcycle" // Commented out: Only using Tricycle
+      //   ? "Single Motorcycle"
+      //   : selectedOption === "Tricycle"
+      //   ? "Tricycle"
+      //   : "Cab";
+      const vehicleType = "Tricycle"; // Only Tricycle is active
 
       // Ensure coordinates are valid numbers
       const dropLat = Number(item.drop_latitude);
@@ -265,12 +272,12 @@ const RideBooking = () => {
             ]}
           >
             <Image
-              source={require("@/assets/icons/rupee.png")}
+              source={require("@/assets/icons/map_pin.png")}
               style={rideStyles?.icon}
             />
             <View>
               <CustomText fontFamily="Medium" fontSize={12}>
-                Cash
+                Distance
               </CustomText>
               <CustomText
                 fontFamily="Medium"
@@ -340,6 +347,7 @@ const RideOption = memo(({ ride, selected, onSelect }: any) => (
         </CustomText>
       </View>
 
+      {/* COMMENTED OUT: Payment/Fare - Driver handles pricing manually
       <View style={rideStyles?.priceContainer}>
         <CustomText 
           fontFamily="Medium" 
@@ -349,6 +357,7 @@ const RideOption = memo(({ ride, selected, onSelect }: any) => (
           ₱{ride?.price?.toFixed(2)}
         </CustomText>
       </View>
+      */}
     </View>
   </TouchableOpacity>
 ));

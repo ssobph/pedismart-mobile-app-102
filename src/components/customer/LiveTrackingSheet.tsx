@@ -8,7 +8,7 @@ import { vehicleIcons } from "@/utils/mapUtils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { resetAndNavigate } from "@/utils/Helpers";
 
-type VehicleType = "Single Motorcycle" | "Tricycle" | "Cab";
+type VehicleType = "Tricycle"; // Commented out: "Single Motorcycle" | "Cab"
 
 interface RideItem {
   _id: string;
@@ -142,6 +142,7 @@ const LiveTrackingSheet: FC<{ item: RideItem }> = ({ item }) => {
           </CustomText>
         </View>
 
+        {/* COMMENTED OUT: Payment/Fare - Driver handles pricing manually
         <View style={{ marginVertical: 20 }}>
           <View style={[commonStyles.flexRowBetween]}>
             <View style={commonStyles.flexRow}>
@@ -166,6 +167,7 @@ const LiveTrackingSheet: FC<{ item: RideItem }> = ({ item }) => {
 
           <CustomText fontSize={10}>Payment via cash</CustomText>
         </View>
+        */}
       </View>
 
       <View style={rideStyles.bottomButtonContainer}>

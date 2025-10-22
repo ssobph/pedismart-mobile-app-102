@@ -8,7 +8,7 @@ import { MaterialCommunityIcons, Ionicons, MaterialIcons } from "@expo/vector-ic
 import { resetAndNavigate } from "@/utils/Helpers";
 import AnonymousRatingModal from "./AnonymousRatingModal";
 
-type VehicleType = "Single Motorcycle" | "Tricycle" | "Cab";
+type VehicleType = "Tricycle"; // Commented out: "Single Motorcycle" | "Cab"
 
 interface RideItem {
   _id: string;
@@ -156,7 +156,8 @@ const RideCompletedSheet: FC<RideCompletedSheetProps> = ({ item, onNavigateHome 
           </View>
         </View>
 
-        {/* Payment Summary */}
+        {/* COMMENTED OUT: Payment/Fare - Driver handles pricing manually
+        Payment Summary
         <View style={{ 
           backgroundColor: '#f5f5f5', 
           padding: 15, 
@@ -188,6 +189,7 @@ const RideCompletedSheet: FC<RideCompletedSheetProps> = ({ item, onNavigateHome 
             Payment via cash - Paid to rider
           </CustomText>
         </View>
+        */}
 
         {/* Rating Section */}
         <TouchableOpacity

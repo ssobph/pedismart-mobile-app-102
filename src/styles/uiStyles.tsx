@@ -75,7 +75,7 @@ export const uiStyles = StyleSheet.create({
     },
     cubeIcon: {
         width: '100%',
-        height: 45,
+        height: 140,
         aspectRatio: 1 / 1,
         resizeMode: "contain",
     },
@@ -85,7 +85,7 @@ export const uiStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 10,
-        height: 60,
+        height: 100,
         marginBottom: 10,
         backgroundColor: '#E5E7EA'
     },
@@ -94,7 +94,7 @@ export const uiStyles = StyleSheet.create({
         height: 200,
         marginVertical: 20,
         alignItems: 'baseline',
-        width: '137%',
+        width: '200%',
         justifyContent: 'flex-start',
     },
     adImage: {

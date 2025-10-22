@@ -7,7 +7,7 @@ import { vehicleIcons } from "@/utils/mapUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { resetAndNavigate } from "@/utils/Helpers";
 
-type VehicleType = "Single Motorcycle" | "Tricycle" | "Cab";
+type VehicleType = "Tricycle"; // Commented out: "Single Motorcycle" | "Cab"
 
 interface RideItem {
   _id: string;

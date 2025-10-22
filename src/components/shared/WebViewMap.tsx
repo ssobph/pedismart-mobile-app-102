@@ -628,26 +628,26 @@ const WebViewMap = forwardRef<WebViewMapRef, WebViewMapProps>(({
             }
             
             function getMarkerIcon(vehicleType) {
-                // Map vehicle types to colors and create custom SVG markers with better icons
+                // Map vehicle types to colors and create custom SVG markers with better icons (only Tricycle is active)
                 const vehicleTypeMap = {
-                    'Single Motorcycle': {
-                        color: '#FF6B35',
-                        bgColor: '#FFF3F0',
-                        icon: '🏍',
-                        symbol: '🏍'
-                    },
+                    // 'Single Motorcycle': { // Commented out: Only using Tricycle
+                    //     color: '#FF6B35',
+                    //     bgColor: '#FFF3F0',
+                    //     icon: '🏍',
+                    //     symbol: '🏍'
+                    // },
                     'Tricycle': {
                         color: '#FFB000',
                         bgColor: '#FFF8E1',
                         icon: '🛖',
                         symbol: '🛖'
                     },
-                    'Cab': {
-                        color: '#007AFF',
-                        bgColor: '#E3F2FD',
-                        icon: '🚗',
-                        symbol: '🚗'
-                    },
+                    // 'Cab': { // Commented out: Only using Tricycle
+                    //     color: '#007AFF',
+                    //     bgColor: '#E3F2FD',
+                    //     icon: '🚗',
+                    //     symbol: '🚗'
+                    // },
                     // Fallback for legacy types
                     'bike': {
                         color: '#FF6B35',

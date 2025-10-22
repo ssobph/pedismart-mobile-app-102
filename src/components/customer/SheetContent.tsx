@@ -9,9 +9,9 @@ import { commonStyles } from "@/styles/commonStyles";
 import ProfileModal from "./ProfileModal";
 
 const cubes = [
-  { name: "Single", imageUri: require("@/assets/icons/SingleMotorcycle-NoBG.png") },
+ // { name: "Single", imageUri: require("@/assets/icons/SingleMotorcycle-NoBG.png") },
   { name: "Tricycle", imageUri: require("@/assets/icons/Tricycle-NoBG.png") },
-  { name: "Four Wheel", imageUri: require("@/assets/icons/Car-NoBG.png") },
+ // { name: "Four Wheel", imageUri: require("@/assets/icons/Car-NoBG.png") },
  // { name: "Coming Soon...", imageUri: require("@/assets/icons/coming_soon.png") },
  // { name: "Four Wheel Premium", imageUri: require("@/assets/icons/cab_premium.png") },
 ];
@@ -35,7 +35,7 @@ const SheetContent = () => {
 
       <View style={commonStyles.flexRowBetween}>
         <CustomText fontFamily="Medium" fontSize={11}>
-          Explore
+          Select a Vehicle
         </CustomText>
 
         <TouchableOpacity style={commonStyles.flexRow}>

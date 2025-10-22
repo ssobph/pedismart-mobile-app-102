@@ -156,17 +156,17 @@ const DraggableMap: FC<{ height: number }> = ({ height }) => {
     });
   };
   
-  // Get vehicle marker image based on vehicle type
+  // Get vehicle marker image based on vehicle type (only Tricycle is active)
   const getVehicleMarkerImage = (vehicleType: string) => {
     switch (vehicleType) {
-      case "Single Motorcycle":
-        return require("@/assets/icons/bike_marker.png");
+      // case "Single Motorcycle": // Commented out: Only using Tricycle
+      //   return require("@/assets/icons/bike_marker.png");
       case "Tricycle":
         return require("@/assets/icons/auto_marker.png");
-      case "Cab":
-        return require("@/assets/icons/cab_marker.png");
+      // case "Cab": // Commented out: Only using Tricycle
+      //   return require("@/assets/icons/cab_marker.png");
       default:
-        return require("@/assets/icons/bike_marker.png");
+        return require("@/assets/icons/auto_marker.png"); // Default to Tricycle
     }
   };
   

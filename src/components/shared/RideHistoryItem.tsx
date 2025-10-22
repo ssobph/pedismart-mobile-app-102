@@ -47,11 +47,11 @@ interface RideHistoryItemProps {
 
 const getVehicleIcon = (vehicle: string) => {
   const icons = {
-    'Single Motorcycle': require('@/assets/icons/SingleMotorcycle-NoBG.png'),
+    // 'Single Motorcycle': require('@/assets/icons/SingleMotorcycle-NoBG.png'), // Commented out: Only using Tricycle
     'Tricycle': require('@/assets/icons/Tricycle-NoBG.png'),
-    'Cab': require('@/assets/icons/Car-NoBG.png'),
+    // 'Cab': require('@/assets/icons/Car-NoBG.png'), // Commented out: Only using Tricycle
   };
-  return icons[vehicle as keyof typeof icons] || require('@/assets/icons/SingleMotorcycle-NoBG.png');
+  return icons[vehicle as keyof typeof icons] || require('@/assets/icons/Tricycle-NoBG.png'); // Default to Tricycle
 };
 
 const getStatusColor = (status: string) => {
@@ -138,15 +138,15 @@ const RideHistoryItem: React.FC<RideHistoryItemProps> = ({ ride, onPress, isRide
     }
   };
   
-  // Format vehicle name for display
+  // Format vehicle name for display (only Tricycle is active)
   const getVehicleName = (vehicle: string) => {
     switch (vehicle) {
-      case 'Single Motorcycle':
-        return 'Single Motorcycle';
+      // case 'Single Motorcycle': // Commented out: Only using Tricycle
+      //   return 'Single Motorcycle';
       case 'Tricycle':
         return 'Tricycle';
-      case 'Cab':
-        return 'Four Wheel';
+      // case 'Cab': // Commented out: Only using Tricycle
+      //   return 'Four Wheel';
       default:
         return vehicle;
     }
@@ -341,12 +341,14 @@ const RideHistoryItem: React.FC<RideHistoryItemProps> = ({ ride, onPress, isRide
               </CustomText>
             </View>
             
+            {/* COMMENTED OUT: Payment/Fare - Driver handles pricing manually
             <View style={styles.summaryItem}>
               <Ionicons name="cash" size={RFValue(14)} color="#4CAF50" />
               <CustomText fontFamily="Medium" fontSize={14} style={styles.fareText}>
                 ₱{ride.fare.toFixed(2)}
               </CustomText>
             </View>
+            */}
           </View>
           
           {/* Expanded Details */}
@@ -417,6 +419,7 @@ const RideHistoryItem: React.FC<RideHistoryItemProps> = ({ ride, onPress, isRide
                     </CustomText>
                   </View>
                   
+                  {/* COMMENTED OUT: Payment/Fare - Driver handles pricing manually
                   <View style={styles.detailItem}>
                     <CustomText fontFamily="Regular" fontSize={12} style={styles.detailLabel}>
                       Fare
@@ -425,6 +428,7 @@ const RideHistoryItem: React.FC<RideHistoryItemProps> = ({ ride, onPress, isRide
                       ₱{ride.fare.toFixed(2)}
                     </CustomText>
                   </View>
+                  */}
                   
                   {ride.otp && (
                     <View style={styles.detailItem}>

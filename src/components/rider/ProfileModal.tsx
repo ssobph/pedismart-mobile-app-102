@@ -233,24 +233,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ visible, onClose }) => {
                   <CustomText fontFamily="Medium">Vehicle Type</CustomText>
                   {isEditing ? (
                     <View style={styles.vehicleTypeContainer}>
-                      <TouchableOpacity 
+                      {/* Commented out: Only using Tricycle */}
+                      {/* <TouchableOpacity 
                         style={[styles.vehicleButton, profileData.vehicleType === "Single Motorcycle" && styles.vehicleButtonSelected]} 
                         onPress={() => handleInputChange("vehicleType", "Single Motorcycle")}
                       >
                         <CustomText fontFamily="Regular" style={[styles.vehicleButtonText, profileData.vehicleType === "Single Motorcycle" && styles.vehicleButtonTextSelected]}>🏍️ Motorcycle</CustomText>
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
                       <TouchableOpacity 
                         style={[styles.vehicleButton, profileData.vehicleType === "Tricycle" && styles.vehicleButtonSelected]} 
                         onPress={() => handleInputChange("vehicleType", "Tricycle")}
                       >
                         <CustomText fontFamily="Regular" style={[styles.vehicleButtonText, profileData.vehicleType === "Tricycle" && styles.vehicleButtonTextSelected]}>🛺 Tricycle</CustomText>
                       </TouchableOpacity>
-                      <TouchableOpacity 
+                      {/* Commented out: Only using Tricycle */}
+                      {/* <TouchableOpacity 
                         style={[styles.vehicleButton, profileData.vehicleType === "Cab" && styles.vehicleButtonSelected]} 
                         onPress={() => handleInputChange("vehicleType", "Cab")}
                       >
                         <CustomText fontFamily="Regular" style={[styles.vehicleButtonText, profileData.vehicleType === "Cab" && styles.vehicleButtonTextSelected]}>🚗 Four Wheel</CustomText>
-                      </TouchableOpacity>
+                      </TouchableOpacity> */}
                     </View>
                   ) : (
                     <View style={[styles.input, styles.inputDisabled, { justifyContent: 'center' }]}>

@@ -57,11 +57,11 @@ const RiderActionButton: FC<{
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const distance = R * c; // Distance in km
 
-      // Average speeds based on vehicle type (km/h)
+      // Average speeds based on vehicle type (km/h) - only Tricycle is active
       const speeds: { [key: string]: number } = {
-        "Single Motorcycle": 30,
+        // "Single Motorcycle": 30, // Commented out: Only using Tricycle
         "Tricycle": 25,
-        "Cab": 35,
+        // "Cab": 35, // Commented out: Only using Tricycle
       };
 
       const averageSpeed = speeds[ride.vehicle] || 30;

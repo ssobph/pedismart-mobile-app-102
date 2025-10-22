@@ -147,11 +147,12 @@ const LiveTrackingMap: FC<{
             <View style={{ transform: [{ rotate: `${rider?.heading}deg` }] }}>
               <Image
                 source={
-                  vehicleType === "Single Motorcycle"
-                    ? require("@/assets/icons/bike_marker.png")
-                    : vehicleType === "Tricycle"
+                  // vehicleType === "Single Motorcycle" // Commented out: Only using Tricycle
+                  //   ? require("@/assets/icons/bike_marker.png")
+                  //   : 
+                  vehicleType === "Tricycle"
                     ? require("@/assets/icons/auto_marker.png")
-                    : require("@/assets/icons/cab_marker.png")
+                    : require("@/assets/icons/auto_marker.png") // Default to Tricycle
                 }
                 style={{ height: 40, width: 40, resizeMode: "contain" }}
               />
