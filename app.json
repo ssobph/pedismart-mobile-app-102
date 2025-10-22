@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "PediSmart",
-    "slug": "rideapp",
+    "slug": "pedismartapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/pedismart_icon.png",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.fankarwanta.rideapp",
+      "bundleIdentifier": "com.pedismart.app",
       "config": {
         "googleMapsApiKey": "AIzaSyAJEayMulsZ_LDps2fKN22Q-ED2f3BwGIw"
       }
@@ -26,10 +26,10 @@
           "apiKey": "AIzaSyAJEayMulsZ_LDps2fKN22Q-ED2f3BwGIw"
         }
       },
-      "package": "com.fankarwanta.rideapp",
+      "package": "com.pedismart.app",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/ecoride_logo1.png",
+        "foregroundImage": "./src/assets/images/pedismart_icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -67,7 +67,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "7a34fec4-996f-4c00-8eda-660d82dc2999"
+        "projectId": "8579beb5-690f-4387-8817-d87f8543b8b8"
       }
     }
   }
