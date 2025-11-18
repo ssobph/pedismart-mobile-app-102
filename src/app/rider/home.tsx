@@ -115,11 +115,11 @@ const RiderHome = () => {
           const isLocationEnabled = await Location.hasServicesEnabledAsync();
           if (!isLocationEnabled) {
             console.log('Location services not enabled, using fallback location');
-            // Use fallback location for Manila
+            // Use fallback location for Digos City
             const fallbackLocation = {
-              latitude: 14.5995,
-              longitude: 120.9842,
-              address: "Manila, Philippines (Fallback)",
+              latitude: 6.7499,
+              longitude: 125.3575,
+              address: "Digos City, Davao Del Sur, Philippines (Fallback)",
               heading: 0,
             };
             setLocation(fallbackLocation);
@@ -154,11 +154,11 @@ const RiderHome = () => {
           );
         } else {
           console.log('Location permission denied, using fallback location');
-          // Use fallback location for Manila
+          // Use fallback location for Digos City
           const fallbackLocation = {
-            latitude: 14.5995,
-            longitude: 120.9842,
-            address: "Manila, Philippines (Fallback)",
+            latitude: 6.7499,
+            longitude: 125.3575,
+            address: "Digos City, Davao Del Sur, Philippines (Fallback)",
             heading: 0,
           };
           setLocation(fallbackLocation);
@@ -170,11 +170,11 @@ const RiderHome = () => {
         }
       } catch (error) {
         console.log('Error with location services, using fallback:', error);
-        // Use fallback location for Manila
+        // Use fallback location for Digos City
         const fallbackLocation = {
-          latitude: 14.5995,
-          longitude: 120.9842,
-          address: "Manila, Philippines (Fallback)",
+          latitude: 6.7499,
+          longitude: 125.3575,
+          address: "Digos City, Davao Del Sur, Philippines (Fallback)",
           heading: 0,
         };
         setLocation(fallbackLocation);
@@ -589,7 +589,7 @@ const RiderHome = () => {
                 <CustomText fontSize={10} style={{ color: 'white', textAlign: 'center' }}>
                   {connectionStatus === 'error' 
                     ? '⚠️ Using backup connection' 
-                    : '🌍 Monitoring ALL city rides'}
+                    : '🌍 Monitoring Rides'}
                 </CustomText>
               </View>
             )}

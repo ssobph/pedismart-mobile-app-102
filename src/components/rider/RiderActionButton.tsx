@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React, { FC, useState, useEffect } from "react";
 import { Colors } from "@/utils/Constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,7 +15,8 @@ const RiderActionButton: FC<{
   title: string;
   onPress: () => void;
   riderLocation?: { latitude: number; longitude: number };
-}> = ({ ride, color = Colors.iosColor, title, onPress, riderLocation }) => {
+  onOpenPassengerModal?: () => void;
+}> = ({ ride, color = Colors.iosColor, title, onPress, riderLocation, onOpenPassengerModal }) => {
   const [eta, setEta] = useState<string>("Calculating...");
 
   // Calculate ETA based on distance and average speed
@@ -160,7 +161,48 @@ const RiderActionButton: FC<{
         </CustomText>
       </View>
 
-      <View style={orderStyles.locationsContainer}>
+      {/* Passenger Management Button */}
+      {onOpenPassengerModal && ride?.passengers && ride.passengers.length > 0 && (
+        <TouchableOpacity
+          onPress={onOpenPassengerModal}
+          style={{
+            backgroundColor: '#4CAF50',
+            borderRadius: 8,
+            paddingVertical: 8,
+            paddingHorizontal: 12,
+            marginTop: 8,
+            marginBottom: 4,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Ionicons name="people" size={18} color="white" />
+            <CustomText fontSize={11} fontFamily="SemiBold" style={{ color: 'white' }}>
+              Manage Passengers
+            </CustomText>
+          </View>
+          <View style={{
+            backgroundColor: 'rgba(255,255,255,0.3)',
+            paddingHorizontal: 8,
+            paddingVertical: 3,
+            borderRadius: 12,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+          }}>
+            <CustomText fontSize={10} fontFamily="Bold" style={{ color: 'white' }}>
+              {ride?.passengers?.filter((p: any) => p.status === 'ONBOARD').length || 0}
+            </CustomText>
+            <CustomText fontSize={9} style={{ color: 'white' }}>
+              Onboard
+            </CustomText>
+          </View>
+        </TouchableOpacity>
+      )}
+
+      <View style={[orderStyles.locationsContainer, { marginTop: 4 }]}>
         <View style={orderStyles.flexRowBase}>
           <View>
             <View style={orderStyles.pickupHollowCircle} />

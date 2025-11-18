@@ -9,6 +9,18 @@ import CustomText from "@/components/shared/CustomText";
 import RideHistoryItem from "@/components/shared/RideHistoryItem";
 import { getRideHistory } from "@/service/rideService";
 
+interface Passenger {
+  _id?: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  status: 'WAITING' | 'ONBOARD' | 'DROPPED';
+  joinedAt: string;
+  boardedAt?: string;
+  isOriginalBooker: boolean;
+}
+
 interface Ride {
   _id: string;
   vehicle: string;
@@ -16,20 +28,33 @@ interface Ride {
   fare: number;
   pickup: {
     address: string;
+    latitude: number;
+    longitude: number;
   };
   drop: {
     address: string;
+    latitude: number;
+    longitude: number;
   };
   status: string;
   customer: {
-    name: string;
+    firstName: string;
+    lastName: string;
     phone: string;
+    _id?: string;
   };
   rider: {
-    name: string;
+    firstName: string;
+    lastName: string;
     phone: string;
+    vehicleType?: string;
+    _id?: string;
   } | null;
   createdAt: string;
+  otp?: string;
+  passengers?: Passenger[];
+  currentPassengerCount?: number;
+  maxPassengers?: number;
 }
 
 const RiderRideHistory = () => {

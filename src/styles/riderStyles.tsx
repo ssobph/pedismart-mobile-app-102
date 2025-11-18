@@ -31,8 +31,8 @@ export const riderStyles = StyleSheet.create({
         paddingTop: screenHeight * 0.2
     },
     icon: {
-        width: 40,
-        height: 40,
+        width: 50,
+        height: 50,
         resizeMode: 'contain'
     },
     earningContainer: {

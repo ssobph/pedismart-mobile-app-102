@@ -419,43 +419,53 @@ const WebViewMap = forwardRef<WebViewMapRef, WebViewMapProps>(({
             // Predefined pin locations
             const pinLocations = [
                 {
-                    id: 'san-miguel-donnas',
-                    name: "Donna's Restaurant & Special Pasalubong",
-                    category: 'San Miguel',
-                    latitude: 15.131632897010784,
-                    longitude: 120.96200900157332,
-                    address: "Donna's Restaurant & Special Pasalubong, San Miguel, Bulacan",
-                    description: "Popular restaurant and pasalubong shop in San Miguel",
+                    id: 'digos-city-hall',
+                    name: "Digos City Hall",
+                    category: 'Government',
+                    latitude: 6.7499,
+                    longitude: 125.3575,
+                    address: "Digos City Hall, Digos City, Davao Del Sur",
+                    description: "Main government center of Digos City",
                     isPinLocation: true
                 },
                 {
-                    id: 'san-miguel-redhorse',
-                    name: "Red Horse Monument San Miguel Bulacan",
-                    category: 'San Miguel',
-                    latitude: 15.162589779129164,
-                    longitude: 120.97136973659035,
-                    address: "Red Horse Monument, San Miguel, Bulacan",
-                    description: "Historic Red Horse Monument landmark",
+                    id: 'digos-public-market',
+                    name: "Digos Public Market",
+                    category: 'Shopping',
+                    latitude: 6.7505,
+                    longitude: 125.3580,
+                    address: "Digos Public Market, Digos City, Davao Del Sur",
+                    description: "Main public market in Digos City",
                     isPinLocation: true
                 },
                 {
-                    id: 'san-ildefonso-ministop',
-                    name: "Old Ministop",
-                    category: 'San Ildefonso',
-                    latitude: 15.077388630676394,
-                    longitude: 120.94174193757298,
-                    address: "Old Ministop, San Ildefonso, Bulacan",
-                    description: "Convenience store location in San Ildefonso",
+                    id: 'digos-gaisano-mall',
+                    name: "Gaisano Mall Digos",
+                    category: 'Shopping',
+                    latitude: 6.7485,
+                    longitude: 125.3590,
+                    address: "Gaisano Mall, Digos City, Davao Del Sur",
+                    description: "Major shopping mall in Digos City",
                     isPinLocation: true
                 },
                 {
-                    id: 'san-rafael-nesabel',
-                    name: "NESABEL Drugstore",
-                    category: 'San Rafael',
-                    latitude: 15.027380609998,
-                    longitude: 120.93456665582181,
-                    address: "NESABEL Drugstore, San Rafael, Bulacan",
-                    description: "Local drugstore in San Rafael",
+                    id: 'digos-terminal',
+                    name: "Digos City Terminal",
+                    category: 'Transport',
+                    latitude: 6.7510,
+                    longitude: 125.3565,
+                    address: "Digos City Terminal, Digos City, Davao Del Sur",
+                    description: "Main transportation terminal in Digos City",
+                    isPinLocation: true
+                },
+                {
+                    id: 'digos-hospital',
+                    name: "Davao Del Sur Provincial Hospital",
+                    category: 'Healthcare',
+                    latitude: 6.7490,
+                    longitude: 125.3555,
+                    address: "Davao Del Sur Provincial Hospital, Digos City",
+                    description: "Main provincial hospital in Digos City",
                     isPinLocation: true
                 }
             ];
@@ -541,9 +551,10 @@ const WebViewMap = forwardRef<WebViewMapRef, WebViewMapProps>(({
             
             function getPinLocationIcon(category) {
                 const categoryColors = {
-                    'San Miguel': '#FF6B35',
-                    'San Ildefonso': '#007AFF', 
-                    'San Rafael': '#34C759'
+                    'Government': '#FF6B35',
+                    'Shopping': '#007AFF', 
+                    'Transport': '#34C759',
+                    'Healthcare': '#FF3B30'
                 };
                 
                 const color = categoryColors[category] || '#FF6B35';
@@ -942,7 +953,7 @@ const WebViewMap = forwardRef<WebViewMapRef, WebViewMapProps>(({
             // Improved Google Maps loading with error handling
             function loadGoogleMaps() {
                 const script = document.createElement('script');
-                script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAJEayMulsZ_LDps2fKN22Q-ED2f3BwGIw&libraries=geometry';
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAyZzkYVI7m2XPsy8yVUVhTTQapJAX59EM&libraries=geometry';
                 script.async = true;
                 script.defer = true;
                 

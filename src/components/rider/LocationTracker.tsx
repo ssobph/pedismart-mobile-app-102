@@ -32,9 +32,9 @@ const LocationTracker: React.FC = () => {
         console.log('Location services are not enabled - using fallback location');
         // Use fallback location for testing
         const fallbackLocation = {
-          latitude: 14.5995,
-          longitude: 120.9842,
-          address: "Manila, Philippines (Fallback)",
+          latitude: 6.7499,
+          longitude: 125.3575,
+          address: "Digos City, Davao Del Sur, Philippines (Fallback)",
           heading: 0,
         };
         setLocation(fallbackLocation);
@@ -52,9 +52,9 @@ const LocationTracker: React.FC = () => {
         console.log('Failed to get current location, using fallback:', locationError);
         // Use fallback location
         const fallbackLocation = {
-          latitude: 14.5995,
-          longitude: 120.9842,
-          address: "Manila, Philippines (Fallback)",
+          latitude: 6.7499,
+          longitude: 125.3575,
+          address: "Digos City, Davao Del Sur, Philippines (Fallback)",
           heading: 0,
         };
         setLocation(fallbackLocation);

@@ -14,9 +14,15 @@ import OtpInputModal from "@/components/rider/OtpInputModal";
 import CustomText from "@/components/shared/CustomText";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
+import PassengerListModal from "@/components/rider/PassengerListModal";
+import PassengerJoinRequestModal from "@/components/rider/PassengerJoinRequestModal";
 
 const LiveRide = () => {
   const [isOtpModalVisible, setOtpModalVisible] = useState(false);
+  const [showPassengerModal, setShowPassengerModal] = useState(false);
+  const [acceptingPassengers, setAcceptingPassengers] = useState(true);
+  const [joinRequest, setJoinRequest] = useState<any>(null);
+  const [showJoinRequestModal, setShowJoinRequestModal] = useState(false);
   const { setLocation, location, setOnDuty } = useRiderStore();
   const { emit, on, off } = useWS();
   const [rideData, setRideData] = useState<any>(null);
@@ -46,6 +52,109 @@ const LiveRide = () => {
         },
       ]
     );
+  };
+
+  const handleUpdatePassengerStatus = async (passengerId: string, status: string) => {
+    try {
+      console.log(`🔄 Updating passenger ${passengerId} status to ${status} via WebSocket`);
+      
+      // Use WebSocket instead of HTTP - no auth token needed!
+      emit("updatePassengerStatus", {
+        rideId: id,
+        passengerId: passengerId,
+        status: status
+      });
+      
+      console.log(`✅ Status update request sent via WebSocket`);
+    } catch (error) {
+      console.error("Error updating passenger status:", error);
+      Alert.alert("Error", "Failed to update passenger status");
+    }
+  };
+
+  const handleRemovePassenger = async (passengerId: string) => {
+    try {
+      console.log(`🗑️ Removing passenger ${passengerId} via WebSocket`);
+      
+      // Use WebSocket instead of HTTP - no auth token needed!
+      emit("removePassenger", {
+        rideId: id,
+        passengerId: passengerId
+      });
+      
+      console.log(`✅ Remove passenger request sent via WebSocket`);
+    } catch (error) {
+      console.error("Error removing passenger:", error);
+      Alert.alert("Error", "Failed to remove passenger");
+    }
+  };
+
+  const handleToggleAcceptingPassengers = async () => {
+    try {
+      console.log(`🔄 Toggling accepting passengers via WebSocket`);
+      
+      // Use WebSocket instead of HTTP - no auth token needed!
+      emit("toggleAcceptingPassengers", {
+        rideId: id
+      });
+      
+      console.log(`✅ Toggle accepting request sent via WebSocket`);
+    } catch (error: any) {
+      console.error("Error toggling accepting passengers:", error);
+      Alert.alert("Error", "Failed to update setting");
+    }
+  };
+
+  const handleApproveJoinRequest = async () => {
+    if (!joinRequest) {
+      console.error("❌ No join request data available");
+      return;
+    }
+
+    try {
+      console.log("✅ Approving join request via WebSocket for passenger:", joinRequest.passenger.userId);
+      
+      // Use WebSocket instead of HTTP - no auth token needed!
+      emit("approveJoinRequest", {
+        rideId: joinRequest.rideId,
+        passengerId: joinRequest.passenger.userId
+      });
+
+      // Close modal immediately - we'll get confirmation via socket
+      setShowJoinRequestModal(false);
+      setJoinRequest(null);
+      
+      console.log("✅ Approve request sent via WebSocket");
+    } catch (error: any) {
+      console.error("❌ Error approving join request:", error);
+      Alert.alert("Error", "Failed to approve request");
+    }
+  };
+
+  const handleDeclineJoinRequest = async () => {
+    if (!joinRequest) {
+      console.error("❌ No join request data available");
+      return;
+    }
+
+    try {
+      console.log("❌ Declining join request via WebSocket for passenger:", joinRequest.passenger.userId);
+      
+      // Use WebSocket instead of HTTP - no auth token needed!
+      emit("declineJoinRequest", {
+        rideId: joinRequest.rideId,
+        passengerId: joinRequest.passenger.userId
+      });
+
+      // Close modal immediately - we'll get confirmation via socket
+      setShowJoinRequestModal(false);
+      setJoinRequest(null);
+      
+      console.log("✅ Decline request sent via WebSocket");
+    } catch (error: any) {
+      console.error("❌ Error declining join request:", error);
+      Alert.alert("Error", "Failed to decline request");
+    }
   };
 
   useEffect(() => {
@@ -125,6 +234,32 @@ const LiveRide = () => {
 
       on("rideData", (data) => {
         setRideData(data);
+        if (data?.acceptingNewPassengers !== undefined) {
+          setAcceptingPassengers(data.acceptingNewPassengers);
+        }
+      });
+
+      on("passengerUpdate", (data) => {
+        console.log("👥 Passenger update received:", data);
+        setRideData(data);
+        if (data?.acceptingNewPassengers !== undefined) {
+          setAcceptingPassengers(data.acceptingNewPassengers);
+        }
+      });
+
+      on("passengerJoinRequest", (data) => {
+        console.log("📨 Passenger join request received:", data);
+        setJoinRequest(data);
+        setShowJoinRequestModal(true);
+      });
+
+      on("newPassengerJoined", (data) => {
+        console.log("👥 New passenger joined:", data.passenger);
+        Alert.alert(
+          "New Passenger",
+          `${data.passenger.firstName} ${data.passenger.lastName} has joined the ride!`,
+          [{ text: "OK" }]
+        );
       });
 
       on("rideCanceled", (data) => {
@@ -169,6 +304,59 @@ const LiveRide = () => {
         resetAndNavigate("/rider/home");
         Alert.alert("Oh Dang! There was an error");
       });
+
+      // Listen for join request approval success
+      on("joinRequestApproveSuccess", (data) => {
+        console.log("✅ Join request approved successfully:", data);
+        Alert.alert("Success", "Passenger has been added to your ride!");
+      });
+
+      // Listen for join request decline success
+      on("joinRequestDeclineSuccess", (data) => {
+        console.log("✅ Join request declined successfully:", data);
+        Alert.alert("Declined", "Join request has been declined");
+      });
+
+      // Listen for join request errors
+      on("joinRequestError", (data) => {
+        console.error("❌ Join request error:", data);
+        Alert.alert("Error", data.message || "Failed to process join request");
+      });
+
+      // Listen for passenger status update success
+      on("passengerStatusUpdateSuccess", (data) => {
+        console.log("✅ Passenger status updated successfully:", data);
+      });
+
+      // Listen for passenger status update errors
+      on("passengerStatusError", (data) => {
+        console.error("❌ Passenger status error:", data);
+        Alert.alert("Error", data.message || "Failed to update passenger status");
+      });
+
+      // Listen for remove passenger success
+      on("removePassengerSuccess", (data) => {
+        console.log("✅ Passenger removed successfully:", data);
+      });
+
+      // Listen for remove passenger errors
+      on("removePassengerError", (data) => {
+        console.error("❌ Remove passenger error:", data);
+        Alert.alert("Error", data.message || "Failed to remove passenger");
+      });
+
+      // Listen for toggle accepting success
+      on("toggleAcceptingSuccess", (data) => {
+        console.log("✅ Toggle accepting success:", data);
+        setAcceptingPassengers(data.acceptingNewPassengers);
+        Alert.alert("Success", data.message);
+      });
+
+      // Listen for toggle accepting errors
+      on("toggleAcceptingError", (data) => {
+        console.error("❌ Toggle accepting error:", data);
+        Alert.alert("Error", data.message || "Failed to toggle accepting passengers");
+      });
     }
 
     return () => {
@@ -177,6 +365,18 @@ const LiveRide = () => {
       off("passengerCancelledRide");
       off("rideUpdate");
       off("error");
+      off("passengerUpdate");
+      off("newPassengerJoined");
+      off("passengerJoinRequest");
+      off("joinRequestApproveSuccess");
+      off("joinRequestDeclineSuccess");
+      off("joinRequestError");
+      off("passengerStatusUpdateSuccess");
+      off("passengerStatusError");
+      off("removePassengerSuccess");
+      off("removePassengerError");
+      off("toggleAcceptingSuccess");
+      off("toggleAcceptingError");
     };
   }, [id, emit, on, off]);
 
@@ -204,39 +404,68 @@ const LiveRide = () => {
             vehicleType={rideData?.vehicle}
           />
 
-          {/* Passenger Name Display - Only show when ride is in progress */}
-          {(rideData?.status === "START" || rideData?.status === "ARRIVED") && rideData?.customer && (
-            <View style={{
-              position: 'absolute',
-              top: 60,
-              left: 20,
-              backgroundColor: '#4CAF50',
-              paddingHorizontal: 16,
-              paddingVertical: 12,
-              borderRadius: 12,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-              maxWidth: '60%',
-              zIndex: 1000,
-            }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="person" size={16} color="white" style={{ marginRight: 6 }} />
-                <CustomText fontFamily="Bold" fontSize={12} style={{ color: 'white' }}>
-                  Passenger
-                </CustomText>
-              </View>
-              <CustomText fontFamily="SemiBold" fontSize={14} style={{ color: 'white', marginTop: 4 }}>
-                {rideData.customer.firstName} {rideData.customer.lastName}
+          {/* Minimal Passenger Counter - Top Left */}
+          {(rideData?.status === "START" || rideData?.status === "ARRIVED") && (
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                top: 60,
+                left: 20,
+                backgroundColor: '#4CAF50',
+                paddingHorizontal: 12,
+                paddingVertical: 8,
+                borderRadius: 10,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5,
+                zIndex: 1000,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+              }}
+              onPress={() => setShowPassengerModal(true)}
+            >
+              <Ionicons name="people" size={18} color="white" />
+              <CustomText fontSize={14} fontFamily="Bold" style={{ color: 'white' }}>
+                {rideData?.passengers?.filter((p: any) => p.status === 'ONBOARD').length || 0} Onboard
               </CustomText>
-              {rideData.customer.phone && (
-                <CustomText fontSize={11} style={{ color: 'rgba(255,255,255,0.9)', marginTop: 2 }}>
-                  📞 {rideData.customer.phone}
-                </CustomText>
-              )}
-            </View>
+            </TouchableOpacity>
+          )}
+
+          {/* Toggle Accepting Passengers Button */}
+          {(rideData?.status === "START" || rideData?.status === "ARRIVED") && (
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                top: 140,
+                left: 20,
+                backgroundColor: acceptingPassengers ? '#2196F3' : '#9E9E9E',
+                paddingHorizontal: 14,
+                paddingVertical: 10,
+                borderRadius: 10,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+                elevation: 5,
+                zIndex: 1000,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+              }}
+              onPress={handleToggleAcceptingPassengers}
+            >
+              <Ionicons
+                name={acceptingPassengers ? 'checkmark-circle' : 'close-circle'}
+                size={18}
+                color="white"
+              />
+              <CustomText fontSize={10} style={{ color: 'white' }}>
+                {acceptingPassengers ? 'Accepting' : 'Not Accepting'}
+              </CustomText>
+            </TouchableOpacity>
           )}
 
           {/* Cancel Button Overlay - Repositioned to top-right */}
@@ -298,6 +527,7 @@ const LiveRide = () => {
             Alert.alert("There was an error");
           }
         }}
+        onOpenPassengerModal={() => setShowPassengerModal(true)}
         color="#228B22"
       />
 
@@ -323,6 +553,27 @@ const LiveRide = () => {
           }}
         />
       )}
+
+      {/* Passenger Management Modal */}
+      {rideData && (
+        <PassengerListModal
+          visible={showPassengerModal}
+          onClose={() => setShowPassengerModal(false)}
+          passengers={rideData?.passengers || []}
+          onUpdateStatus={handleUpdatePassengerStatus}
+          onRemovePassenger={handleRemovePassenger}
+          isRider={true}
+        />
+      )}
+
+      {/* Passenger Join Request Modal */}
+      <PassengerJoinRequestModal
+        visible={showJoinRequestModal}
+        passengerDetails={joinRequest?.passenger}
+        rideDetails={joinRequest?.ride}
+        onApprove={handleApproveJoinRequest}
+        onDecline={handleDeclineJoinRequest}
+      />
     </View>
   );
 };

@@ -8,6 +8,18 @@ import { formatDate } from '@/utils/Helpers';
 import RatingModal from '@/components/customer/RatingModal';
 import { checkRideRating, getRiderRatings } from '@/service/rideService';
 
+interface Passenger {
+  _id?: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  status: 'WAITING' | 'ONBOARD' | 'DROPPED';
+  joinedAt: string;
+  boardedAt?: string;
+  isOriginalBooker: boolean;
+}
+
 interface RideHistoryItemProps {
   ride: {
     _id: string;
@@ -40,6 +52,9 @@ interface RideHistoryItemProps {
     } | null;
     createdAt: string;
     otp?: string;
+    passengers?: Passenger[];
+    currentPassengerCount?: number;
+    maxPassengers?: number;
   };
   onPress?: () => void;
   isRider?: boolean;
@@ -400,6 +415,66 @@ const RideHistoryItem: React.FC<RideHistoryItemProps> = ({ ride, onPress, isRide
                 </View>
               </View>
               
+              {/* Passengers Section */}
+              {ride.passengers && ride.passengers.length > 0 && (
+                <View style={styles.passengersSection}>
+                  <View style={styles.sectionHeader}>
+                    <Ionicons name="people" size={RFValue(16)} color={Colors.primary} />
+                    <CustomText fontFamily="Medium" fontSize={14} style={styles.sectionTitle}>
+                      Passengers ({ride.currentPassengerCount || ride.passengers.length}/{ride.maxPassengers || 6})
+                    </CustomText>
+                  </View>
+                  
+                  <View style={styles.passengersList}>
+                    {ride.passengers.map((passenger, index) => (
+                      <View key={passenger._id || index} style={styles.passengerItem}>
+                        <View style={styles.passengerInfo}>
+                          <View style={styles.passengerHeader}>
+                            <Ionicons name="person" size={RFValue(14)} color={Colors.primary} />
+                            <CustomText fontFamily="Medium" fontSize={13} style={styles.passengerName}>
+                              {passenger.firstName} {passenger.lastName}
+                            </CustomText>
+                            {passenger.isOriginalBooker && (
+                              <View style={styles.bookerBadge}>
+                                <CustomText fontFamily="Medium" fontSize={10} style={styles.bookerText}>
+                                  Booker
+                                </CustomText>
+                              </View>
+                            )}
+                          </View>
+                          
+                          {passenger.phone && (
+                            <CustomText fontFamily="Regular" fontSize={11} style={styles.passengerPhone}>
+                              📞 {passenger.phone}
+                            </CustomText>
+                          )}
+                          
+                          <CustomText fontFamily="Regular" fontSize={10} style={styles.passengerTime}>
+                            Joined: {new Date(passenger.joinedAt).toLocaleString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit'
+                            })}
+                          </CustomText>
+                        </View>
+                        
+                        <View style={[
+                          styles.statusBadgeSmall,
+                          passenger.status === 'ONBOARD' && styles.statusOnboard,
+                          passenger.status === 'DROPPED' && styles.statusDropped,
+                          passenger.status === 'WAITING' && styles.statusWaiting,
+                        ]}>
+                          <CustomText fontFamily="Medium" fontSize={10} style={styles.statusBadgeText}>
+                            {passenger.status}
+                          </CustomText>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+              
               {/* Trip Details */}
               <View style={styles.tripDetailsSection}>
                 <View style={styles.sectionHeader}>
@@ -753,6 +828,76 @@ const styles = StyleSheet.create({
   },
   ratedIcon: {
     marginRight: 4,
+  },
+  passengersSection: {
+    marginBottom: 16,
+  },
+  passengersList: {
+    paddingLeft: 24,
+  },
+  passengerItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    backgroundColor: '#F8F9FA',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.primary,
+  },
+  passengerInfo: {
+    flex: 1,
+    marginRight: 8,
+  },
+  passengerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  passengerName: {
+    color: Colors.text,
+    marginLeft: 6,
+    flex: 1,
+  },
+  bookerBadge: {
+    backgroundColor: Colors.primary,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginLeft: 6,
+  },
+  bookerText: {
+    color: '#000000',
+    fontSize: RFValue(9),
+  },
+  passengerPhone: {
+    color: '#757575',
+    marginLeft: 20,
+    marginBottom: 2,
+  },
+  passengerTime: {
+    color: '#999999',
+    marginLeft: 20,
+  },
+  statusBadgeSmall: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  statusOnboard: {
+    backgroundColor: '#4CAF50',
+  },
+  statusDropped: {
+    backgroundColor: '#9E9E9E',
+  },
+  statusWaiting: {
+    backgroundColor: '#FFC107',
+  },
+  statusBadgeText: {
+    color: '#FFFFFF',
+    fontSize: RFValue(9),
   },
 });
 

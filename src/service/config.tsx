@@ -34,12 +34,16 @@ export const SOCKET_URL = 'wss://pedismart-server-deploy102.onrender.com';
 // export const SOCKET_URL = 'ws://192.168.137.218:3000';
 
 //DITO WIFI
-//export const BASE_URL = 'http://192.168.86.149:3000';
-//export const SOCKET_URL = 'ws://192.168.86.149:3000';
+//export const BASE_URL = 'http://192.168.250.149:3000';
+//export const SOCKET_URL = 'ws://192.168.250.149:3000';
 
 // DOGH IT WIFI
 //export const BASE_URL = 'http://192.168.137.90:3000';
 //export const SOCKET_URL = 'ws://192.168.137.90:3000';
+
+// GLOBE WIFI
+//export const BASE_URL = 'http://192.168.250.149:3000';
+//export const SOCKET_URL = 'ws://192.168.250.149:3000';
 
 // ============================================
 // MAX DISTANCE FEATURE (Easy to enable/disable)

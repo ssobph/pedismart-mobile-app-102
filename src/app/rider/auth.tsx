@@ -48,7 +48,6 @@ export default function Auth() {
   const [vehicleType, setVehicleType] = useState("");
   const [photo, setPhoto] = useState<any>(null);
   const [schoolIdDocument, setSchoolIdDocument] = useState<any>(null);
-  const [staffFacultyIdDocument, setStaffFacultyIdDocument] = useState<any>(null);
   const [cor, setCor] = useState<any>(null);
   const [driverLicense, setDriverLicense] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -126,15 +125,6 @@ export default function Auth() {
             uri: cor.uri,
             type: cor.mimeType || 'image/jpeg',
             name: cor.name || 'cor.jpg',
-          } as any);
-        }
-      } else if (userRole === 'Faculty' || userRole === 'Staff') {
-        if (staffFacultyIdDocument) {
-          console.log('Adding staff/faculty ID document to upload');
-          formData.append('staffFacultyIdDocument', {
-            uri: staffFacultyIdDocument.uri,
-            type: staffFacultyIdDocument.mimeType || 'image/jpeg',
-            name: staffFacultyIdDocument.name || 'staff_id.jpg',
           } as any);
         }
       }
@@ -280,11 +270,6 @@ export default function Auth() {
           Alert.alert('Documents Required', 'School ID and COR are required for students');
           return;
         }
-      } else if (userRole === 'Faculty' || userRole === 'Staff') {
-        if (!staffFacultyIdDocument) {
-          Alert.alert('Document Required', `${userRole} ID is required for ${userRole.toLowerCase()}`);
-          return;
-        }
       }
     }
     
@@ -313,7 +298,6 @@ export default function Auth() {
         vehicleType,
         photo: documentUrls.photo,
         schoolIdDocument: documentUrls.schoolIdDocument,
-        staffFacultyIdDocument: documentUrls.staffFacultyIdDocument,
         cor: documentUrls.cor,
         driverLicense: documentUrls.driverLicense
       }, updateAccessToken);
@@ -681,25 +665,11 @@ export default function Auth() {
         <CustomText fontFamily="Medium">Role</CustomText>
         <View style={styles.radioContainer}>
           <TouchableOpacity 
-            style={[styles.radioButton, userRole === "Student" && styles.radioButtonSelected]} 
+            style={[styles.radioButton, styles.radioButtonSelected]} 
             onPress={() => setUserRole("Student")}
           >
-            <View style={[styles.radioCircle, userRole === "Student" && styles.radioCircleSelected]} />
+            <View style={[styles.radioCircle, styles.radioCircleSelected]} />
             <CustomText fontFamily="Regular">Student</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.radioButton, userRole === "Faculty" && styles.radioButtonSelected]} 
-            onPress={() => setUserRole("Faculty")}
-          >
-            <View style={[styles.radioCircle, userRole === "Faculty" && styles.radioCircleSelected]} />
-            <CustomText fontFamily="Regular">Faculty</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.radioButton, userRole === "Staff" && styles.radioButtonSelected]} 
-            onPress={() => setUserRole("Staff")}
-          >
-            <View style={[styles.radioCircle, userRole === "Staff" && styles.radioCircleSelected]} />
-            <CustomText fontFamily="Regular">Staff</CustomText>
           </TouchableOpacity>
         </View>
       </View>
@@ -754,22 +724,6 @@ export default function Auth() {
                 </TouchableOpacity>
               </View>
             </>
-          )}
-
-          {/* Faculty/Staff Documents */}
-          {(userRole === 'Faculty' || userRole === 'Staff') && (
-            <View style={styles.inputContainer}>
-              <CustomText fontFamily="Medium">{userRole} ID *</CustomText>
-              <TouchableOpacity 
-                style={styles.documentButton}
-                onPress={() => pickDocument(setStaffFacultyIdDocument)}
-              >
-                <MaterialIcons name="badge" size={20} color="#666" />
-                <CustomText fontFamily="Regular" style={styles.documentButtonText}>
-                  {staffFacultyIdDocument ? staffFacultyIdDocument.name || `${userRole} ID Selected` : `Upload ${userRole} ID`}
-                </CustomText>
-              </TouchableOpacity>
-            </View>
           )}
 
           {/* Driver License - Required for all drivers */}

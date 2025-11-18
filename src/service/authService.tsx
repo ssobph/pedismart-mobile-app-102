@@ -198,7 +198,6 @@ export const register = async (
     vehicleType?: string;
     photo?: string;
     schoolIdDocument?: string;
-    staffFacultyIdDocument?: string;
     cor?: string;
     driverLicense?: string;
   },

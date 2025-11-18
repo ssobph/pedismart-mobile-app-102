@@ -1,7 +1,7 @@
 import { View, Text, Image, TouchableOpacity, Animated } from "react-native";
 import React, { FC, memo, useEffect, useRef, useState, useMemo } from "react";
 import { useIsFocused } from "@react-navigation/native";
-import MapView, { Marker, Region } from "react-native-maps";
+import MapView, { Marker, Region, Polyline } from "react-native-maps";
 import { useUserStore } from "@/store/userStore";
 import { useWS } from "@/service/WSProvider";
 import { customMapStyle, indiaIntialRegion } from "@/utils/CustomMap";
@@ -12,6 +12,8 @@ import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { RFValue } from "react-native-responsive-fontsize";
 import DriverDetailsModal from "./DriverDetailsModal";
 import ActiveRidersModal from "./ActiveRidersModal";
+import { getAvailableRidesForJoining } from "@/service/rideService";
+import { router } from "expo-router";
 import * as Location from "expo-location";
 
 const DraggableMap: FC<{ height: number }> = ({ height }) => {
@@ -20,6 +22,7 @@ const DraggableMap: FC<{ height: number }> = ({ height }) => {
   const [selectedDriver, setSelectedDriver] = useState<any>(null);
   const [driverDetailsVisible, setDriverDetailsVisible] = useState(false);
   const [activeRidersVisible, setActiveRidersVisible] = useState(false);
+  const [availableRides, setAvailableRides] = useState<any[]>([]);
   const mapRef = useRef<MapView>(null);
   const { setLocation, location, outOfRange, setOutOfRange } = useUserStore();
   const { emit, on, off } = useWS();
@@ -27,6 +30,52 @@ const DraggableMap: FC<{ height: number }> = ({ height }) => {
   
   // Animation for arrow rotation
   const arrowRotation = useRef(new Animated.Value(0)).current;
+
+  // Fetch available rides (just for badge count)
+  const fetchAvailableRides = async () => {
+    try {
+      console.log('🔍 Fetching available rides for badge...');
+      const rides = await getAvailableRidesForJoining();
+      console.log(`✅ Found ${rides?.length || 0} available rides`);
+      setAvailableRides(rides || []);
+    } catch (error) {
+      console.error('❌ Error fetching available rides:', error);
+      setAvailableRides([]);
+    }
+  };
+
+  // Listen for ride updates via socket
+  useEffect(() => {
+    on("passengerUpdate", (data) => {
+      console.log('👥 Passenger update received on map');
+      fetchAvailableRides(); // Refresh rides when passengers change
+    });
+
+    on("newRideRequest", (data) => {
+      console.log('🚗 New ride request on map');
+      fetchAvailableRides(); // Refresh when new ride is created
+    });
+
+    on("rideAccepted", (data) => {
+      console.log('✅ Ride accepted on map');
+      fetchAvailableRides(); // Refresh when ride is accepted
+    });
+
+    return () => {
+      off("passengerUpdate");
+      off("newRideRequest");
+      off("rideAccepted");
+    };
+  }, [on, off]);
+
+  // Fetch rides periodically - ALWAYS fetch for badge count
+  useEffect(() => {
+    if (isFocused) {
+      fetchAvailableRides(); // Initial fetch
+      const interval = setInterval(fetchAvailableRides, 15000); // Refresh every 15 seconds
+      return () => clearInterval(interval);
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     (async () => {
@@ -457,6 +506,40 @@ const DraggableMap: FC<{ height: number }> = ({ height }) => {
           <FontAwesome6 name="road-circle-exclamation" size={24} color="red" />
         </View>
       )}
+
+      {/* Available Rides Button - Navigate to dedicated page */}
+      <TouchableOpacity
+        style={[mapStyles.gpsButton, { bottom: 140, backgroundColor: '#2196F3' }]}
+        onPress={() => {
+          router.push('/customer/availablerides');
+        }}
+      >
+        <MaterialCommunityIcons
+          name="car-multiple"
+          size={RFValue(16)}
+          color="white"
+        />
+        {/* ALWAYS show badge when there are available rides */}
+        {availableRides.length > 0 && (
+          <View style={{
+            position: 'absolute',
+            top: -8,
+            right: -8,
+            backgroundColor: '#FF4444',
+            borderRadius: 10,
+            minWidth: 20,
+            height: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderWidth: 2,
+            borderColor: 'white',
+          }}>
+            <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>
+              {availableRides.length}
+            </Text>
+          </View>
+        )}
+      </TouchableOpacity>
       
       {/* Driver Details Modal */}
       <DriverDetailsModal

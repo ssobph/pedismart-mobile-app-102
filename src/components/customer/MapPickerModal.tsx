@@ -256,39 +256,39 @@ const MapPickerModal: FC<MapPickerModalProps> = ({
         setAddress(address || "Current location");
         } catch (locationError) {
           console.log("Failed to get current location, using fallback:", locationError);
-          // Use fallback location (Manila, Philippines)
+          // Use fallback location (Digos City, Davao Del Sur, Philippines)
           const fallbackRegion = {
-            latitude: 14.5995,
-            longitude: 120.9842,
+            latitude: 6.7499,
+            longitude: 125.3575,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           };
           setRegion(fallbackRegion);
-          setAddress("Manila, Philippines (Fallback)");
+          setAddress("Digos City, Davao Del Sur, Philippines (Fallback)");
         }
       } else {
         console.log("Location permission denied, using fallback");
         // Use fallback location
         const fallbackRegion = {
-          latitude: 14.5995,
-          longitude: 120.9842,
+          latitude: 6.7499,
+          longitude: 125.3575,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         };
         setRegion(fallbackRegion);
-        setAddress("Manila, Philippines (Fallback)");
+        setAddress("Digos City, Davao Del Sur, Philippines (Fallback)");
       }
     } catch (error) {
       console.log("Error getting location, using fallback:", error);
       // Use fallback location
       const fallbackRegion = {
-        latitude: 14.5995,
-        longitude: 120.9842,
+        latitude: 6.7499,
+        longitude: 125.3575,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       };
       setRegion(fallbackRegion);
-      setAddress("Manila, Philippines (Fallback)");
+      setAddress("Digos City, Davao Del Sur, Philippines (Fallback)");
     } finally {
       setIsLoadingAddress(false);
     }

@@ -84,10 +84,10 @@ const RiderLiveTracking: FC<{
         longitudeDelta: 0.02,
       };
     }
-    console.log("🗺️ Using Manila fallback region");
+    console.log("🗺️ Using Digos City fallback region");
     return {
-      latitude: 14.5995,
-      longitude: 120.9842,
+      latitude: 6.7499,
+      longitude: 125.3575,
       latitudeDelta: 0.02,
       longitudeDelta: 0.02,
     };

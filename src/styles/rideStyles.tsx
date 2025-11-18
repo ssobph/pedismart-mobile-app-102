@@ -34,6 +34,8 @@ export const rideStyles = StyleSheet.create({
     icon: {
         width: 40,
         height: 40,
+        left: 10,
+        marginLeft: 5,
         resizeMode: 'contain'
     },
     bookingContainer: {
@@ -67,8 +69,8 @@ export const rideStyles = StyleSheet.create({
         alignItems: 'center',
     },
     rideIcon: {
-        width: 40,
-        height: 40,
+        width: 70,
+        height: 70,
         resizeMode: 'contain'
     },
     scrollContainer: {

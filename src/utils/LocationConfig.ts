@@ -7,11 +7,11 @@ export interface LocationData {
   address: string;
 }
 
-// Default current location - Bulacan Agricultural State College - Main Campus
+// Default current location - Digos City, Davao Del Sur
 export const DEFAULT_CURRENT_LOCATION: LocationData = {
-  latitude: 15.073340554475491,
-  longitude: 120.95695658465743,
-  address: "Bulacan Agricultural State College - Main Campus, San Ildefonso, Bulacan, Philippines"
+  latitude: 6.7499,
+  longitude: 125.3575,
+  address: "Digos City, Davao Del Sur, Philippines"
 };
 
 // Map region configuration
@@ -74,49 +74,49 @@ export interface PinLocation extends LocationData {
 
 export const PIN_LOCATIONS: PinLocation[] = [
   {
-    id: 'san-miguel-donnas',
-    name: "Donna's Restaurant & Special Pasalubong",
-    category: 'San Miguel',
-    latitude: 15.131632897010784,
-    longitude: 120.96200900157332,
-    address: "Donna's Restaurant & Special Pasalubong, San Miguel, Bulacan",
-    description: "Popular restaurant and pasalubong shop in San Miguel"
+    id: 'digos-city-hall',
+    name: "Digos City Hall",
+    category: 'Government',
+    latitude: 6.7499,
+    longitude: 125.3575,
+    address: "Digos City Hall, Digos City, Davao Del Sur",
+    description: "Main government center of Digos City"
   },
   {
-    id: 'san-miguel-redhorse',
-    name: "Red Horse Monument San Miguel Bulacan",
-    category: 'San Miguel',
-    latitude: 15.162589779129164,
-    longitude: 120.97136973659035,
-    address: "Red Horse Monument, San Miguel, Bulacan",
-    description: "Historic Red Horse Monument landmark"
+    id: 'digos-public-market',
+    name: "Digos Public Market",
+    category: 'Shopping',
+    latitude: 6.7505,
+    longitude: 125.3580,
+    address: "Digos Public Market, Digos City, Davao Del Sur",
+    description: "Main public market in Digos City"
   },
   {
-    id: 'san-ildefonso-basc',
-    name: "Bulacan Agricultural State College, Main Campus",
-    category: 'San Ildefonso',
-    latitude: 15.073340554475491,
-    longitude: 120.95695658465743,
-    address: "Bulacan Agricultural State College, Main Campus, San Ildefonso, Bulacan",
-    description: "Main campus of Bulacan Agricultural State College"
+    id: 'digos-gaisano-mall',
+    name: "Gaisano Mall Digos",
+    category: 'Shopping',
+    latitude: 6.7485,
+    longitude: 125.3590,
+    address: "Gaisano Mall, Digos City, Davao Del Sur",
+    description: "Major shopping mall in Digos City"
   },
   {
-    id: 'san-ildefonso-ministop',
-    name: "Old Ministop",
-    category: 'San Ildefonso',
-    latitude: 15.077388630676394,
-    longitude: 120.94174193757298,
-    address: "Old Ministop, San Ildefonso, Bulacan",
-    description: "Convenience store location in San Ildefonso"
+    id: 'digos-terminal',
+    name: "Digos City Terminal",
+    category: 'Transport',
+    latitude: 6.7510,
+    longitude: 125.3565,
+    address: "Digos City Terminal, Digos City, Davao Del Sur",
+    description: "Main transportation terminal in Digos City"
   },
   {
-    id: 'san-rafael-nesabel',
-    name: "NESABEL Drugstore",
-    category: 'San Rafael',
-    latitude: 15.027380609998,
-    longitude: 120.93456665582181,
-    address: "NESABEL Drugstore, San Rafael, Bulacan",
-    description: "Local drugstore in San Rafael"
+    id: 'digos-hospital',
+    name: "Davao Del Sur Provincial Hospital",
+    category: 'Healthcare',
+    latitude: 6.7490,
+    longitude: 125.3555,
+    address: "Davao Del Sur Provincial Hospital, Digos City",
+    description: "Main provincial hospital in Digos City"
   }
 ];
 
@@ -135,14 +135,14 @@ export const getPinLocationById = (id: string): PinLocation | undefined => {
   return PIN_LOCATIONS.find(location => location.id === id);
 };
 
-// Function to check if location is within Bulacan bounds
-export const isWithinBulacan = (location: { latitude: number; longitude: number }): boolean => {
-  // Approximate bounds for Bulacan Province
+// Function to check if location is within Digos City bounds
+export const isWithinDigosCity = (location: { latitude: number; longitude: number }): boolean => {
+  // Approximate bounds for Digos City, Davao Del Sur
   const bounds = {
-    north: 15.3,
-    south: 14.7,
-    east: 121.2,
-    west: 120.7
+    north: 6.80,
+    south: 6.70,
+    east: 125.40,
+    west: 125.30
   };
   
   return (

@@ -84,6 +84,19 @@ export const WSProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         }
       });
+
+      // Global listener for join request approval (for customers)
+      socket.current.on("joinRequestApproved", (data) => {
+        console.log('🎉 Global: Join request approved!', data);
+        // This will be handled by the liveride screen if already there,
+        // or trigger navigation if on a different screen
+      });
+
+      // Global listener for join request decline (for customers)
+      socket.current.on("joinRequestDeclined", (data) => {
+        console.log('❌ Global: Join request declined', data);
+        // This will be handled by the liveride screen if already there
+      });
     }
 
     return () => {

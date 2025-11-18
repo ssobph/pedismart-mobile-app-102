@@ -31,7 +31,6 @@ interface ProfileData {
   penaltyLiftDate: string;
   photo: string;
   schoolIdDocument: string;
-  staffFacultyIdDocument: string;
   cor: string;
   driverLicense: string;
 }
@@ -61,7 +60,6 @@ const RiderProfilePage = () => {
     penaltyLiftDate: "",
     photo: "",
     schoolIdDocument: "",
-    staffFacultyIdDocument: "",
     cor: "",
     driverLicense: "",
   });
@@ -93,7 +91,6 @@ const RiderProfilePage = () => {
         penaltyLiftDate: userData.penaltyLiftDate ? new Date(userData.penaltyLiftDate).toLocaleDateString() : "",
         photo: userData.photo || "",
         schoolIdDocument: userData.schoolIdDocument || "",
-        staffFacultyIdDocument: userData.staffFacultyIdDocument || "",
         cor: userData.cor || "",
         driverLicense: userData.driverLicense || "",
       });
@@ -492,7 +489,6 @@ const RiderProfilePage = () => {
               <View style={styles.documentsGrid}>
                 {renderDocumentItem("School ID", profileData.schoolIdDocument)}
                 {renderDocumentItem("Driver's License", profileData.driverLicense)}
-                {renderDocumentItem("Staff/Faculty ID", profileData.staffFacultyIdDocument)}
                 {renderDocumentItem("Certificate of Registration", profileData.cor)}
               </View>
             </View>

@@ -37,7 +37,6 @@ interface ProfileData {
   // Image URLs
   photo: string;
   schoolIdDocument: string;
-  staffFacultyIdDocument: string;
   cor: string;
   driverLicense: string;
 }
@@ -69,7 +68,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ visible, onClose }) => {
     penaltyLiftDate: "",
     photo: "",
     schoolIdDocument: "",
-    staffFacultyIdDocument: "",
     cor: "",
     driverLicense: "",
   });
@@ -103,7 +101,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ visible, onClose }) => {
         penaltyLiftDate: userData.penaltyLiftDate ? new Date(userData.penaltyLiftDate).toLocaleDateString() : "",
         photo: userData.photo || "",
         schoolIdDocument: userData.schoolIdDocument || "",
-        staffFacultyIdDocument: userData.staffFacultyIdDocument || "",
         cor: userData.cor || "",
         driverLicense: userData.driverLicense || "",
       });
@@ -390,7 +387,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ visible, onClose }) => {
 
                   {renderDocumentItem("School ID", profileData.schoolIdDocument, "school-outline")}
                   {profileData.role === 'rider' && renderDocumentItem("Driver's License", profileData.driverLicense, "car-outline")}
-                  {profileData.userRole !== 'Student' && renderDocumentItem("Staff/Faculty ID", profileData.staffFacultyIdDocument, "id-card-outline")}
                   {profileData.role === 'rider' && renderDocumentItem("Certificate of Registration", profileData.cor, "document-text-outline")}
                 </View>
 

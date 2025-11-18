@@ -17,13 +17,13 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.pedismart.app",
       "config": {
-        "googleMapsApiKey": "AIzaSyAJEayMulsZ_LDps2fKN22Q-ED2f3BwGIw"
+        "googleMapsApiKey": "AIzaSyAyZzkYVI7m2XPsy8yVUVhTTQapJAX59EM"
       }
     },
     "android": {
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyAJEayMulsZ_LDps2fKN22Q-ED2f3BwGIw"
+          "apiKey": "AIzaSyAyZzkYVI7m2XPsy8yVUVhTTQapJAX59EM"
         }
       },
       "package": "com.pedismart.app",
@@ -55,7 +55,7 @@
       [
         "./plugins/react-native-maps.js",
         {
-          "apiKey": "AIzaSyAJEayMulsZ_LDps2fKN22Q-ED2f3BwGIw"
+          "apiKey": "AIzaSyAyZzkYVI7m2XPsy8yVUVhTTQapJAX59EM"
         }
       ]
     ],

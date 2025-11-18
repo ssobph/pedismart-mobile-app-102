@@ -1,4 +1,4 @@
-package com.fankarwanta.rideapp
+package com.pedismart.app
 
 import android.app.Application
 import android.content.res.Configuration

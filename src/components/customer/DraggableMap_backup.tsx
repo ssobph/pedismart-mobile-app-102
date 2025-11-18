@@ -47,10 +47,10 @@ const DraggableMap: FC<{ height: number }> = ({ height }) => {
             handleRegionChangeComplete(newRegion);
           } catch (error) {
             console.error("Error getting current location:", error);
-            // Fallback to default location (Manila, Philippines) for testing
+            // Fallback to default location (Digos City, Davao Del Sur, Philippines) for testing
             const fallbackRegion = {
-              latitude: 14.5995,
-              longitude: 120.9842,
+              latitude: 6.7499,
+              longitude: 125.3575,
               latitudeDelta: 0.05,
               longitudeDelta: 0.05,
             };
@@ -60,8 +60,8 @@ const DraggableMap: FC<{ height: number }> = ({ height }) => {
         } else {
           // Fallback to default location if permission denied
           const fallbackRegion = {
-            latitude: 14.5995,
-            longitude: 120.9842,
+            latitude: 6.7499,
+            longitude: 125.3575,
             latitudeDelta: 0.05,
             longitudeDelta: 0.05,
           };

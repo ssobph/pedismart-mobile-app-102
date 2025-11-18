@@ -1,4 +1,4 @@
-import { View, Text, Platform, ActivityIndicator, Alert } from "react-native";
+import { View, Text, Platform, ActivityIndicator, Alert, BackHandler } from "react-native";
 import React, {
   memo,
   useCallback,
@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { screenHeight } from "@/utils/Constants";
 import { useWS } from "@/service/WSProvider";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useFocusEffect, useNavigation } from "@react-navigation/native";
 import { rideStyles } from "@/styles/rideStyles";
 import { StatusBar } from "expo-status-bar";
 import LiveTrackingMap from "@/components/customer/LiveTrackingMap";
@@ -20,12 +20,16 @@ import LiveTrackingSheet from "@/components/customer/LiveTrackingSheet";
 import RideCompletedSheet from "@/components/customer/RideCompletedSheet";
 import RideCanceledSheet from "@/components/customer/RideCanceledSheet";
 import { resetAndNavigate } from "@/utils/Helpers";
+import { useUserStore } from "@/store/userStore";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const androidHeights = [screenHeight * 0.12, screenHeight * 0.42];
 const iosHeights = [screenHeight * 0.2, screenHeight * 0.5];
 
 const LiveRide = () => {
   const { emit, on, off } = useWS();
+  const { user } = useUserStore();
+  const navigation = useNavigation();
   const [rideData, setRideData] = useState<any>(null);
   const [riderCoords, setriderCoords] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,6 +40,7 @@ const LiveRide = () => {
   const bottomSheetRef = useRef(null);
   const navigationTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialLoad = useRef(true);
+  const isDroppedPassenger = useRef(false);
   const snapPoints = useMemo(
     () => (Platform.OS === "ios" ? iosHeights : androidHeights),
     []
@@ -50,13 +55,78 @@ const LiveRide = () => {
     setMapHeight(height);
   }, []);
 
+  // CRITICAL: Check AsyncStorage on mount to see if this ride has a dropped passenger
   useEffect(() => {
+    const checkDroppedStatus = async () => {
+      if (id && user?.id) {
+        const droppedKey = `dropped_passenger_${user.id}_${id}`;
+        const isDropped = await AsyncStorage.getItem(droppedKey);
+        
+        if (isDropped === 'true') {
+          console.log('🚫 CRITICAL: User is marked as DROPPED in AsyncStorage - redirecting to home immediately');
+          isDroppedPassenger.current = true;
+          resetAndNavigate("/customer/home");
+        }
+      }
+    };
+    
+    checkDroppedStatus();
+  }, [id, user?.id]);
+
+  // CRITICAL: Block navigation back to live ride if passenger is DROPPED
+  useFocusEffect(
+    useCallback(() => {
+      if (isDroppedPassenger.current) {
+        console.log('🚫 BLOCKED: Dropped passenger tried to access live ride - redirecting to home');
+        // Immediately redirect to home
+        resetAndNavigate("/customer/home");
+        return;
+      }
+    }, [])
+  );
+
+  useEffect(() => {
+    // CRITICAL: Don't subscribe if passenger is already dropped
+    if (isDroppedPassenger.current) {
+      console.log('🚫 Skipping ride subscription - passenger is DROPPED');
+      setIsLoading(false);
+      return;
+    }
+    
     if (id) {
       console.log('Subscribing to ride:', id);
       emit("subscribeRide", id);
 
-      on("rideData", (data) => {
+      on("rideData", async (data) => {
         console.log('Received ride data:', JSON.stringify(data, null, 2));
+        
+        // Check if current user is a passenger and their status is DROPPED
+        if (user?.id && data?.passengers) {
+          const currentPassenger = data.passengers.find(
+            (p: any) => (p.userId?._id || p.userId) === user.id
+          );
+          
+          if (currentPassenger && currentPassenger.status === 'DROPPED') {
+            console.log('🏁 Current user is DROPPED passenger - DISCONNECTING');
+            isDroppedPassenger.current = true;
+            
+            // CRITICAL: Store dropped status in AsyncStorage
+            if (user?.id && id) {
+              const droppedKey = `dropped_passenger_${user.id}_${id}`;
+              await AsyncStorage.setItem(droppedKey, 'true');
+              console.log(`💾 Stored dropped status in AsyncStorage: ${droppedKey}`);
+            }
+            
+            // CRITICAL: Leave the ride room immediately
+            emit("leaveRide", id);
+            console.log('🚨 Left ride socket room on initial load');
+            
+            // Show complete screen
+            setRideData({ ...data, status: 'COMPLETED' });
+            setIsLoading(false);
+            return;
+          }
+        }
         
         // Only redirect if ride is already finished on INITIAL LOAD (not during the ride)
         if (isInitialLoad.current && (data?.status === "CANCELLED" || data?.status === "COMPLETED" || data?.status === "TIMEOUT")) {
@@ -79,8 +149,141 @@ const LiveRide = () => {
 
       on("rideUpdate", (data) => {
         console.log('Received ride update:', JSON.stringify(data, null, 2));
+        
+        // If this passenger is DROPPED, don't update the view
+        if (isDroppedPassenger.current) {
+          console.log('🚫 Ignoring ride update - passenger is DROPPED');
+          return;
+        }
+        
+        // Check if current user is DROPPED in this update
+        if (user?.id && data?.passengers) {
+          const currentPassenger = data.passengers.find(
+            (p: any) => (p.userId?._id || p.userId) === user.id
+          );
+          
+          if (currentPassenger && currentPassenger.status === 'DROPPED') {
+            console.log('🏁 Passenger is DROPPED in update - maintaining complete screen');
+            isDroppedPassenger.current = true;
+            return; // Don't update, keep complete screen
+          }
+        }
+        
         setRideData(data);
         setError(null);
+      });
+
+      on("passengerUpdate", (data) => {
+        console.log('👥 Passenger update received:', data);
+        
+        // If this passenger is DROPPED, don't update the view
+        if (isDroppedPassenger.current) {
+          console.log('🚫 Ignoring passenger update - passenger is DROPPED');
+          return;
+        }
+        
+        // Check if current user is DROPPED in this update
+        if (user?.id && data?.passengers) {
+          const currentPassenger = data.passengers.find(
+            (p: any) => (p.userId?._id || p.userId) === user.id
+          );
+          
+          if (currentPassenger && currentPassenger.status === 'DROPPED') {
+            console.log('🏁 Passenger is DROPPED in update - maintaining complete screen');
+            isDroppedPassenger.current = true;
+            return; // Don't update, keep complete screen
+          }
+        }
+        
+        setRideData(data);
+      });
+
+      on("yourStatusUpdated", async (data) => {
+        console.log('👤 Your status updated:', data.status);
+        
+        // If passenger is marked as DROPPED, immediately show complete screen
+        if (data.status === 'DROPPED') {
+          console.log('🏁 Passenger marked as DROPPED - DISCONNECTING FROM RIDE');
+          
+          // Mark as dropped passenger
+          isDroppedPassenger.current = true;
+          
+          // CRITICAL: Store dropped status in AsyncStorage to persist across app restarts
+          if (user?.id && id) {
+            const droppedKey = `dropped_passenger_${user.id}_${id}`;
+            await AsyncStorage.setItem(droppedKey, 'true');
+            console.log(`💾 Stored dropped status in AsyncStorage: ${droppedKey}`);
+          }
+          
+          // CRITICAL: Leave the ride socket room to stop receiving updates
+          emit("leaveRide", id);
+          console.log('🚨 Left ride socket room - no more updates will be received');
+          
+          // Immediately set ride status to COMPLETED for this passenger's view
+          setRideData({ ...data.ride, status: 'COMPLETED' });
+          
+          // Show alert after changing the view
+          setTimeout(() => {
+            Alert.alert(
+              "You've Been Dropped Off",
+              "The rider has marked you as dropped off. Thank you for riding with us!",
+              [{ text: "OK" }]
+            );
+          }, 500);
+        } else {
+          // For other status updates, just update the ride data
+          setRideData(data.ride);
+        }
+      });
+
+      on("removedFromRide", (data) => {
+        console.log('👋 Removed from ride:', data);
+        Alert.alert(
+          "Removed from Ride",
+          data.message || "You have been removed from this ride",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                emit("leaveRide", id);
+                resetAndNavigate("/customer/home");
+              }
+            }
+          ]
+        );
+      });
+
+      on("joinRequestApproved", (data) => {
+        console.log('✅ Join request approved:', data);
+        Alert.alert(
+          "Request Approved!",
+          data.message || "The rider has approved your join request. You are now part of this ride!",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                // Navigate to live ride tracking
+                resetAndNavigate(`/customer/liveride?id=${data.rideId}`);
+              }
+            }
+          ]
+        );
+      });
+
+      on("joinRequestDeclined", (data) => {
+        console.log('❌ Join request declined:', data);
+        Alert.alert(
+          "Request Declined",
+          data.message || "The rider has declined your join request.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                resetAndNavigate("/customer/home");
+              }
+            }
+          ]
+        );
       });
 
       on("rideAccepted", (data) => {
@@ -90,12 +293,19 @@ const LiveRide = () => {
         }
       });
 
-      on("rideCompleted", (data) => {
+      on("rideCompleted", async (data) => {
         console.log('Ride completed event received:', JSON.stringify(data, null, 2));
         if (data) {
           setRideData(data);
           // Leave the ride room immediately to stop receiving updates
           emit("leaveRide", id);
+          
+          // CRITICAL: Clear dropped passenger status from AsyncStorage when ride is completed
+          if (user?.id && id) {
+            const droppedKey = `dropped_passenger_${user.id}_${id}`;
+            await AsyncStorage.removeItem(droppedKey);
+            console.log(`🗑️ Cleared dropped status from AsyncStorage: ${droppedKey}`);
+          }
         }
       });
 
@@ -159,6 +369,11 @@ const LiveRide = () => {
       off("rideCanceled");
       off("riderCancelledRide");
       off("error");
+      off("passengerUpdate");
+      off("yourStatusUpdated");
+      off("removedFromRide");
+      off("joinRequestApproved");
+      off("joinRequestDeclined");
     };
   }, [id, emit, on, off]);
 
@@ -184,6 +399,11 @@ const LiveRide = () => {
 
   // Force refresh ride data every 3 seconds to ensure we get updates
   useEffect(() => {
+    // CRITICAL: Don't refresh if passenger is dropped
+    if (isDroppedPassenger.current) {
+      return;
+    }
+    
     if (id && rideData?.status === "SEARCHING_FOR_RIDER") {
       const interval = setInterval(() => {
         console.log('Force refreshing ride data...');
@@ -231,6 +451,10 @@ const LiveRide = () => {
     console.log('🏠 Navigating to home screen');
     resetAndNavigate("/customer/home");
   }, [id, rideData?.rider?._id, emit, off]);
+
+  // CRITICAL: Dropped passengers will NOT auto-redirect
+  // They must use the native back button to return home
+  // This prevents the redirect loop caused by getMyRides()
 
   // Auto-navigate to home when ride status becomes COMPLETED or CANCELLED
   useEffect(() => {
@@ -311,7 +535,11 @@ const LiveRide = () => {
             {rideData?.status === "SEARCHING_FOR_RIDER" ? (
               <SearchingRideSheet item={rideData} />
             ) : rideData?.status === "COMPLETED" ? (
-              <RideCompletedSheet item={rideData} onNavigateHome={cleanupAndNavigateHome} />
+              <RideCompletedSheet 
+                item={rideData} 
+                onNavigateHome={cleanupAndNavigateHome}
+                isDroppedPassenger={isDroppedPassenger.current}
+              />
             ) : rideData?.status === "CANCELLED" ? (
               <RideCanceledSheet item={rideData} />
             ) : (

@@ -62,9 +62,10 @@ export default function LocationSelection() {
 
   const getCategoryColor = (category: string) => {
     const categoryColors = {
-      'San Miguel': '#FF6B35',
-      'San Ildefonso': '#007AFF', 
-      'San Rafael': '#34C759'
+      'Government': '#FF6B35',
+      'Shopping': '#007AFF', 
+      'Transport': '#34C759',
+      'Healthcare': '#FF3B30'
     };
     return categoryColors[category as keyof typeof categoryColors] || '#FF6B35';
   };

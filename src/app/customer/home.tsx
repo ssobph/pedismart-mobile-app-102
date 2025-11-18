@@ -1,4 +1,4 @@
-import { View, Text, Platform, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Platform, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import React, {
   useCallback,
   useEffect,
@@ -86,6 +86,39 @@ const CustomerHome = () => {
     on("unreadCountUpdate", handleUnreadCountUpdate);
     on("messagesRead", handleMessagesRead);
 
+    // Listen for join request approval
+    const handleJoinRequestApproved = (data: any) => {
+      console.log('🎉 Customer Home: Join request approved!', data);
+      Alert.alert(
+        "Request Approved!",
+        "The rider has approved your join request. You can now join the ride!",
+        [
+          {
+            text: "Join Ride",
+            onPress: () => {
+              router.push({
+                pathname: '/customer/liveride',
+                params: { id: data.rideId },
+              });
+            }
+          }
+        ]
+      );
+    };
+
+    // Listen for join request decline
+    const handleJoinRequestDeclined = (data: any) => {
+      console.log('❌ Customer Home: Join request declined', data);
+      Alert.alert(
+        "Request Declined",
+        data.message || "The rider has declined your join request.",
+        [{ text: "OK" }]
+      );
+    };
+
+    on("joinRequestApproved", handleJoinRequestApproved);
+    on("joinRequestDeclined", handleJoinRequestDeclined);
+
     // Refresh unread count every 60 seconds as backup (reduced from 30s)
     const interval = setInterval(() => {
       chatNotificationService.refreshUnreadCount();
@@ -96,6 +129,8 @@ const CustomerHome = () => {
       off("newMessage");
       off("unreadCountUpdate");
       off("messagesRead");
+      off("joinRequestApproved");
+      off("joinRequestDeclined");
       clearInterval(interval);
     };
   }, [on, off]);
@@ -141,6 +176,7 @@ const CustomerHome = () => {
           </View>
         )}
       </TouchableOpacity>
+
     </View>
   );
 };

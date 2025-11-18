@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { useWS } from "@/service/WSProvider";
 import { rideStyles } from "@/styles/rideStyles";
 import { commonStyles } from "@/styles/commonStyles";
@@ -7,6 +7,8 @@ import CustomText from "../shared/CustomText";
 import { vehicleIcons } from "@/utils/mapUtils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { resetAndNavigate } from "@/utils/Helpers";
+import PassengerIndicator from "../shared/PassengerIndicator";
+import PassengerListModal from "../rider/PassengerListModal";
 
 type VehicleType = "Tricycle"; // Commented out: "Single Motorcycle" | "Cab"
 
@@ -23,6 +25,7 @@ interface RideItem {
 
 const LiveTrackingSheet: FC<{ item: RideItem }> = ({ item }) => {
   const { emit } = useWS();
+  const [showPassengerModal, setShowPassengerModal] = useState(false);
   
   console.log('LiveTrackingSheet rendered with item:', item);
   console.log('Item status:', item?.status);
@@ -112,6 +115,36 @@ const LiveTrackingSheet: FC<{ item: RideItem }> = ({ item }) => {
         </View>
       )}
 
+      {/* Passenger Indicator - Show current passengers */}
+      {(item?.status === "START" || item?.status === "ARRIVED") && (item as any)?.passengers && (
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#4CAF50',
+            marginHorizontal: 10,
+            marginTop: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 10,
+            borderRadius: 10,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.15,
+            shadowRadius: 3.84,
+            elevation: 3,
+          }}
+          onPress={() => setShowPassengerModal(true)}
+        >
+          <PassengerIndicator
+            currentCount={(item as any)?.currentPassengerCount || 1}
+            maxCount={(item as any)?.maxPassengers || 6}
+            size="medium"
+            showLabel={true}
+          />
+          <CustomText fontSize={10} style={{ color: 'white', marginTop: 6, textAlign: 'center' }}>
+            Tap to view all passengers
+          </CustomText>
+        </TouchableOpacity>
+      )}
+
       <View style={{ padding: 10 }}>
         <CustomText fontFamily="SemiBold" fontSize={12}>
           Location Details
@@ -192,6 +225,18 @@ const LiveTrackingSheet: FC<{ item: RideItem }> = ({ item }) => {
           <CustomText style={rideStyles.backButtonText}>Back</CustomText>
         </TouchableOpacity>
       </View>
+
+      {/* Passenger List Modal (View Only for Customer) */}
+      {(item as any)?.passengers && (
+        <PassengerListModal
+          visible={showPassengerModal}
+          onClose={() => setShowPassengerModal(false)}
+          passengers={(item as any)?.passengers || []}
+          onUpdateStatus={() => {}}
+          onRemovePassenger={() => {}}
+          isRider={false}
+        />
+      )}
       
     </View>
   );
